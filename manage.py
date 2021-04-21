@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-#BORRAR ESTO
+
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Ventaline.settings')
