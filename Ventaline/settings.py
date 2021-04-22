@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'tablas_de_ventaline',
         'USER': 'postgres',
         'PASSWORD': 'Ventaline',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
