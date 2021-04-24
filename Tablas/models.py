@@ -5,8 +5,8 @@ from django.db import models
 class Cliente(models.Model):
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
-    dni = models.CharField(max_length=20)
-    email = models.EmailField(max_length=40)
+    dni = models.CharField(max_length=20,unique=True)
+    email = models.EmailField(max_length=40,unique=True)
     contraseña = models.CharField(max_length=15)
     fecha_nacimiento = models.DateField()
     gold = models.BooleanField()
@@ -18,7 +18,7 @@ class Cliente(models.Model):
 class Chofer(models.Model):
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
-    email = models.EmailField(max_length=40)
+    email = models.EmailField(max_length=40,unique=True)
     contraseña = models.CharField(max_length=15)
     telefono = models.CharField(max_length=15)
     class Meta: 
@@ -27,10 +27,10 @@ class Chofer(models.Model):
     
 class Combi(models.Model):
     modelo = models.CharField(max_length=15)
-    patente = models.CharField(max_length=10)
+    patente = models.CharField(max_length=10,unique=True)
     cant_asientos = models.IntegerField()
     tipo = models.CharField(max_length=15)
-    chofer = models.IntegerField()
+    chofer = models.ForeignKey(Chofer,on_delete=models.PROTECT)
     
 class Producto(models.Model):
     nombre = models.CharField(max_length=20)
@@ -46,12 +46,12 @@ class Lugar(models.Model):
         verbose_name_plural = "lugares"
     
 class Ruta(models.Model):
-    ciudad_origen = models.CharField(max_length=20)
-    ciudad_destino = models.CharField(max_length=20)
-    combi = models.IntegerField()
+    ciudad_origen = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_origen")
+    ciudad_destino = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_destino")
+    combi = models.ForeignKey(Combi,on_delete=models.PROTECT)
     datos_adicionales = models.CharField(max_length=40)
     
 class Viaje(models.Model):
-    ruta = models.IntegerField()
+    ruta = models.ForeignKey(Ruta,on_delete=models.PROTECT)
     fecha_hora = models.DateTimeField()
     precio = models.IntegerField()
