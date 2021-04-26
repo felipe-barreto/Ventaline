@@ -6,9 +6,21 @@ class ClientesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","gold","tarjeta_numero")
     search_fields=('nombre','apellido','dni','email')
 
+    def get_readonly_fields(self, request,obj):
+        if obj:
+            return ['email','contraseña']
+        else:
+            return []
+
 class ChoferesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","email","contraseña","telefono")
     search_fields=('nombre','apellido',)
+
+    def get_readonly_fields(self, request,obj):
+        if obj:
+            return ['email','contraseña']
+        else:
+            return []
 
 class CombisAdmin(admin.ModelAdmin):
     list_display=("modelo","patente","cant_asientos","tipo","chofer")
