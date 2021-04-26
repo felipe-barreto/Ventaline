@@ -29,7 +29,7 @@ class Combi(models.Model):
     modelo = models.CharField(max_length=15)
     patente = models.CharField(max_length=10,unique=True)
     cant_asientos = models.IntegerField()
-    tipo = models.CharField(max_length=15)
+    tipo = models.CharField(max_length=15, choices=[('Cómoda','Cómoda'), ('Súper-cómoda','Súper-cómoda')])
     chofer = models.ForeignKey(Chofer,on_delete=models.PROTECT)
     
 class Producto(models.Model):
