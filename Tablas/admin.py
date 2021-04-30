@@ -4,7 +4,7 @@ import Tablas.models as tablas
 
 class ClientesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","gold","tarjeta_numero")
-    search_fields=('nombre','apellido','dni','email')
+    #search_fields=('nombre','apellido','dni','email')
 
     def get_readonly_fields(self, request,obj):
         if obj:
@@ -14,7 +14,7 @@ class ClientesAdmin(admin.ModelAdmin):
 
 class ChoferesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","telefono")
-    search_fields=('nombre','apellido',)
+    #search_fields=('nombre','apellido',)
 
     def get_readonly_fields(self, request,obj):
         if obj:
@@ -24,16 +24,16 @@ class ChoferesAdmin(admin.ModelAdmin):
 
 class CombisAdmin(admin.ModelAdmin):
     list_display=("modelo","patente","cant_asientos","tipo","chofer")
-    search_fields=('patente',)
-    list_filter=('tipo',)
+    #search_fields=('patente',)
+    #list_filter=('tipo',)
 
 class ProductosAdmin(admin.ModelAdmin):
     list_display=("nombre","tipo","precio")
-    search_fields=('nombre',)
+    #search_fields=('nombre',)
 
 class LugaresAdmin(admin.ModelAdmin):
     list_display=("provincia","nombre_ciudad","observaciones")
-    search_fields=('nombre_ciudad',)
+    #search_fields=('nombre_ciudad',)
 
 class RutasAdmin(admin.ModelAdmin):
     list_display=("ciudad_origen","ciudad_destino","combi","datos_adicionales")
