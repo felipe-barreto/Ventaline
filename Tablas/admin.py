@@ -13,7 +13,7 @@ class ClientesAdmin(admin.ModelAdmin):
             return []
 
 class ChoferesAdmin(admin.ModelAdmin):
-    list_display=("nombre","apellido","email","contraseña","telefono")
+    list_display=("nombre","apellido","dni","email","contraseña","telefono")
     search_fields=('nombre','apellido',)
 
     def get_readonly_fields(self, request,obj):
