@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Tablas',
+    'PaginaWeb',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'Ventaline.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['PaginaWeb/plantillas'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,11 +77,11 @@ WSGI_APPLICATION = 'Ventaline.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'tablas_de_ventaline',
         'USER': 'postgres',
         'PASSWORD': 'Ventaline',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
