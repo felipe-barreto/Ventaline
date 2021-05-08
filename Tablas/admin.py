@@ -3,14 +3,14 @@ import Tablas.models as tablas
 # Register your models here.
 
 class ClientesAdmin(admin.ModelAdmin):
-    list_display=("nombre","apellido","dni","email","contraseña","gold","tarjeta_numero")
+    list_display=("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['email','contraseña']
+            return ['email','contraseña','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 class ChoferesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","telefono")
@@ -18,9 +18,9 @@ class ChoferesAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['email','contraseña']
+            return ['email','contraseña','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 class CombisAdmin(admin.ModelAdmin):
     list_display=("modelo","patente","cant_asientos","tipo","chofer")
@@ -29,13 +29,19 @@ class CombisAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['cant_asientos',]
+            return ['cant_asientos','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 class ProductosAdmin(admin.ModelAdmin):
     list_display=("nombre","tipo","precio")
     #search_fields=('nombre',)
+
+    def get_readonly_fields(self, request,obj):
+        if obj:
+            return ['is_deleted','deleted_at']
+        else:
+            return ['is_deleted','deleted_at']
 
 class LugaresAdmin(admin.ModelAdmin):
     list_display=("provincia","nombre_ciudad","observaciones")
@@ -43,27 +49,27 @@ class LugaresAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['provincia','nombre_ciudad']
+            return ['provincia','nombre_ciudad','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 class RutasAdmin(admin.ModelAdmin):
     list_display=("ciudad_origen","ciudad_destino","combi","datos_adicionales")
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['ciudad_origen','ciudad_destino','combi']
+            return ['ciudad_origen','ciudad_destino','combi','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 class ViajesAdmin(admin.ModelAdmin):
     list_display=("ruta","fecha_hora","precio")
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['ruta','fecha_hora','precio']
+            return ['ruta','fecha_hora','precio','is_deleted','deleted_at']
         else:
-            return []
+            return ['is_deleted','deleted_at']
 
 admin.site.register(tablas.Cliente, ClientesAdmin)
 admin.site.register(tablas.Chofer, ChoferesAdmin)

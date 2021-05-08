@@ -9,7 +9,7 @@ class Cliente(sd.SoftDeletionModel):
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
-    email = models.EmailField(max_length=40,unique=True)
+    email = models.EmailField(max_length=40,validators=[sd.validar_email_cliente])
     contraseña = models.CharField(max_length=15)
     fecha_nacimiento = models.DateField()
     gold = models.BooleanField()
@@ -21,11 +21,11 @@ class Cliente(sd.SoftDeletionModel):
     def __str__(self):
         return 'Email: %s, Nombre: %s, Apellido: %s'%(self.email, self.nombre, self.apellido)
     
-class Chofer(models.Model):
+class Chofer(sd.SoftDeletionModel):
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
-    dni = models.CharField(max_length=20,unique=True)
-    email = models.EmailField(max_length=40,unique=True)
+    dni = models.CharField(max_length=20,validators=[sd.validar_dni_chofer])
+    email = models.EmailField(max_length=40,validators=[sd.validar_email_chofer])
     contraseña = models.CharField(max_length=15)
     telefono = models.CharField(max_length=15)
     class Meta: 
@@ -35,9 +35,9 @@ class Chofer(models.Model):
     def __str__(self):
         return 'Email: %s, Nombre: %s, Apellido: %s'%(self.email, self.nombre, self.apellido)
     
-class Combi(models.Model):
+class Combi(sd.SoftDeletionModel):
     modelo = models.CharField(max_length=15)
-    patente = models.CharField(max_length=10,unique=True)
+    patente = models.CharField(max_length=10,validators=[sd.validar_patente_combi])
     cant_asientos = models.IntegerField()
     tipo = models.CharField(max_length=15, choices=[('Cómoda','Cómoda'), ('Súper-cómoda','Súper-cómoda')])
     chofer = models.ForeignKey(Chofer,on_delete=models.PROTECT)
@@ -45,15 +45,15 @@ class Combi(models.Model):
     def __str__(self):
         return 'Patente: %s, Tipo: %s, Cantidad de asientos: %s'%(self.patente, self.tipo, self.cant_asientos)
     
-class Producto(models.Model):
-    nombre = models.CharField(max_length=20,unique=True)
+class Producto(sd.SoftDeletionModel):
+    nombre = models.CharField(max_length=20,validators=[sd.validar_nombre_producto])
     tipo = models.CharField(max_length=20)
     precio = models.IntegerField()
 
     def __str__(self):
         return 'Nombre: %s, Tipo: %s, Precio: %s'%(self.nombre,self.tipo,self.precio)
     
-class Lugar(models.Model):
+class Lugar(sd.SoftDeletionModel):
     provincia = models.CharField(max_length=20)
     nombre_ciudad = models.CharField(max_length=20)
     observaciones = models.CharField(max_length=40,null=True,blank=True)
@@ -65,7 +65,7 @@ class Lugar(models.Model):
     def __str__(self):
         return 'Ciudad: %s, Provincia: %s'%(self.nombre_ciudad,self.provincia)
     
-class Ruta(models.Model):
+class Ruta(sd.SoftDeletionModel):
     ciudad_origen = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_origen")
     ciudad_destino = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_destino")
     combi = models.ForeignKey(Combi,on_delete=models.PROTECT)
@@ -80,7 +80,7 @@ class Ruta(models.Model):
     def __str__(self):
         return 'Origen: (%s, %s), Destino: (%s, %s) Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
     
-class Viaje(models.Model):
+class Viaje(sd.SoftDeletionModel):
     ruta = models.ForeignKey(Ruta,on_delete=models.PROTECT)
     fecha_hora = models.DateTimeField()
     precio = models.IntegerField()
