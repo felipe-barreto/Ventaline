@@ -1,13 +1,14 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from Tablas import softdeletion as sd
 
 # Create your models here.
 
-class Cliente(models.Model):
+class Cliente(sd.SoftDeletionModel):
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
-    dni = models.CharField(max_length=20,unique=True)
+    dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
     email = models.EmailField(max_length=40,unique=True)
     contraseña = models.CharField(max_length=15)
     fecha_nacimiento = models.DateField()
