@@ -1,5 +1,6 @@
 from django.contrib import admin
 import Tablas.models as tablas
+
 # Register your models here.
 
 class ClientesAdmin(admin.ModelAdmin):

@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from Tablas import softdeletion as sd
+from django.utils import timezone
 
 # Create your models here.
 
@@ -44,6 +45,12 @@ class Combi(sd.SoftDeletionModel):
 
     def __str__(self):
         return 'Patente: %s, Tipo: %s, Cantidad de asientos: %s'%(self.patente, self.tipo, self.cant_asientos)
+
+    def delete(self):
+        nuevo_chofer = Chofer(nombre=self.chofer.nombre,apellido=self.chofer.apellido,dni=self.chofer.dni,email=self.chofer.email,contraseña=self.chofer.contraseña,telefono=self.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        nuevo_chofer.save()
+        self.chofer = nuevo_chofer
+        return super(Combi,self).delete()
     
 class Producto(sd.SoftDeletionModel):
     nombre = models.CharField(max_length=20,validators=[sd.validar_nombre_producto])
@@ -84,6 +91,20 @@ class Ruta(sd.SoftDeletionModel):
     
     def __str__(self):
         return 'Origen: (%s, %s), Destino: (%s, %s) Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
+
+    def delete(self):
+        nuevo_origen = Lugar(provincia=self.ciudad_origen.provincia,nombre_ciudad=self.ciudad_origen.nombre_ciudad,observaciones=self.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_origen.save()
+        self.ciudad_origen = nuevo_origen
+        nuevo_destino = Lugar(provincia=self.ciudad_destino.provincia,nombre_ciudad=self.ciudad_destino.nombre_ciudad,observaciones=self.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_destino.save()
+        self.ciudad_destino = nuevo_destino
+        nuevo_chofer = Chofer(nombre=self.combi.chofer.nombre,apellido=self.combi.chofer.apellido,dni=self.combi.chofer.dni,email=self.combi.chofer.email,contraseña=self.combi.chofer.contraseña,telefono=self.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        nuevo_chofer.save()
+        nueva_combi = Combi(modelo=self.combi.modelo,patente=self.combi.patente,cant_asientos=self.combi.cant_asientos,tipo=self.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
+        nueva_combi.save()
+        self.combi = nueva_combi
+        return super(Ruta,self).delete()
     
 class Viaje(sd.SoftDeletionModel):
     ruta = models.ForeignKey(Ruta,on_delete=models.PROTECT)
@@ -98,3 +119,17 @@ class Viaje(sd.SoftDeletionModel):
         for r in Viaje.objects.all():
             if ((self.ruta==r.ruta) and (self.fecha_hora==r.fecha_hora)):
                 raise ValidationError('Ya hay un viaje con esta ruta y fecha-hora')
+
+    def delete(self):
+        nuevo_origen = Lugar(provincia=self.ruta.ciudad_origen.provincia,nombre_ciudad=self.ruta.ciudad_origen.nombre_ciudad,observaciones=self.ruta.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_origen.save()
+        nuevo_destino = Lugar(provincia=self.ruta.ciudad_destino.provincia,nombre_ciudad=self.ruta.ciudad_destino.nombre_ciudad,observaciones=self.ruta.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_destino.save()
+        nuevo_chofer = Chofer(nombre=self.ruta.combi.chofer.nombre,apellido=self.ruta.combi.chofer.apellido,dni=self.ruta.combi.chofer.dni,email=self.ruta.combi.chofer.email,contraseña=self.ruta.combi.chofer.contraseña,telefono=self.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        nuevo_chofer.save()
+        nueva_combi = Combi(modelo=self.ruta.combi.modelo,patente=self.ruta.combi.patente,cant_asientos=self.ruta.combi.cant_asientos,tipo=self.ruta.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
+        nueva_combi.save()
+        nueva_ruta = Ruta(ciudad_origen=nuevo_origen,ciudad_destino=nuevo_destino,combi=nueva_combi,datos_adicionales=self.ruta.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
+        nueva_ruta.save()
+        self.ruta = nueva_ruta
+        return super(Viaje,self).delete()
