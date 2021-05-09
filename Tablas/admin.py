@@ -6,11 +6,20 @@ class ClientesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
 
-    def get_readonly_fields(self, request,obj):
+    def get_readonly_fields(self,request,obj):
         if obj:
             return ['email','contraseña','is_deleted','deleted_at']
         else:
             return ['is_deleted','deleted_at']
+
+    def has_add_permission(self,request):
+        return False
+
+    def has_change_permission(self,request,obj=None):
+        return False
+    
+    def has_delete_permission(self,request,obj=None):
+        return False
 
 class ChoferesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","telefono")
@@ -63,7 +72,7 @@ class RutasAdmin(admin.ModelAdmin):
             return ['is_deleted','deleted_at']
 
 class ViajesAdmin(admin.ModelAdmin):
-    list_display=("ruta","fecha_hora","precio")
+    list_display=("ruta","fecha_hora","precio","datos_adicionales")
 
     def get_readonly_fields(self, request,obj):
         if obj:

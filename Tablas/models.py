@@ -84,6 +84,7 @@ class Viaje(sd.SoftDeletionModel):
     ruta = models.ForeignKey(Ruta,on_delete=models.PROTECT)
     fecha_hora = models.DateTimeField()
     precio = models.IntegerField()
+    datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
 
     class Meta:
         unique_together=('ruta','fecha_hora',)
