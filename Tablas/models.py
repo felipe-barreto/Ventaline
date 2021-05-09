@@ -60,22 +60,27 @@ class Lugar(sd.SoftDeletionModel):
     class Meta: 
         verbose_name = "lugar"
         verbose_name_plural = "lugares"
-        unique_together=('provincia','nombre_ciudad',)
     
     def __str__(self):
         return 'Ciudad: %s, Provincia: %s'%(self.nombre_ciudad,self.provincia)
+    
+    def clean(self):
+        for l in Lugar.objects.all():
+            if ((l.provincia == self.provincia) and (l.nombre_ciudad==self.nombre_ciudad)):
+                raise ValidationError('Ya hay una con esta provincia y ciudad, por favor ingrese otra')
     
 class Ruta(sd.SoftDeletionModel):
     ciudad_origen = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_origen")
     ciudad_destino = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_destino")
     combi = models.ForeignKey(Combi,on_delete=models.PROTECT)
     datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
-    class Meta:
-        unique_together=('ciudad_origen','ciudad_destino',)
 
     def clean(self):
         if (self.ciudad_origen == self.ciudad_destino):
             raise ValidationError(_('La ciudad origen y destino deben ser distintas'))
+        for r in Ruta.objects.all():
+            if ((self.ciudad_origen==r.ciudad_origen) and (self.ciudad_origen==r.ciudad_origen)):
+                raise ValidationError('Ya hay una ruta con este origen y destino')
     
     def __str__(self):
         return 'Origen: (%s, %s), Destino: (%s, %s) Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
@@ -85,9 +90,11 @@ class Viaje(sd.SoftDeletionModel):
     fecha_hora = models.DateTimeField()
     precio = models.IntegerField()
     datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
-
-    class Meta:
-        unique_together=('ruta','fecha_hora',)
     
     def __str__(self):
         return 'Ruta: ( %s ), Fecha: %s, Precio: %s'%(self.ruta,self.fecha_hora,self.precio)
+    
+    def clean(self):
+        for r in Viaje.objects.all():
+            if ((self.ruta==r.ruta) and (self.fecha_hora==r.fecha_hora)):
+                raise ValidationError('Ya hay un viaje con esta ruta y fecha-hora')
