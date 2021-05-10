@@ -6,6 +6,7 @@ import Tablas.models as tablas
 class ClientesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
+    fields = ("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
 
     def get_readonly_fields(self,request,obj):
         if obj:
@@ -24,6 +25,7 @@ class ClientesAdmin(admin.ModelAdmin):
 
 class ChoferesAdmin(admin.ModelAdmin):
     list_display=("nombre","apellido","dni","email","contraseña","telefono")
+    fields = ("nombre","apellido","dni","email","contraseña","telefono",)
     #search_fields=('nombre','apellido',)
 
     def get_readonly_fields(self, request,obj):
@@ -34,6 +36,7 @@ class ChoferesAdmin(admin.ModelAdmin):
 
 class CombisAdmin(admin.ModelAdmin):
     list_display=("modelo","patente","cant_asientos","tipo","chofer")
+    fields = ("modelo","patente","cant_asientos","tipo","chofer")
     #search_fields=('patente',)
     #list_filter=('tipo',)
 
@@ -45,6 +48,7 @@ class CombisAdmin(admin.ModelAdmin):
 
 class ProductosAdmin(admin.ModelAdmin):
     list_display=("nombre","tipo","precio")
+    fields = ("nombre","tipo","precio")
     #search_fields=('nombre',)
 
     def get_readonly_fields(self, request,obj):
@@ -56,6 +60,7 @@ class ProductosAdmin(admin.ModelAdmin):
 class LugaresAdmin(admin.ModelAdmin):
     list_display=("provincia","nombre_ciudad","observaciones")
     #search_fields=('nombre_ciudad',)
+    fields = ("provincia","nombre_ciudad","observaciones")
 
     def get_readonly_fields(self, request,obj):
         if obj:
@@ -65,6 +70,7 @@ class LugaresAdmin(admin.ModelAdmin):
 
 class RutasAdmin(admin.ModelAdmin):
     list_display=("ciudad_origen","ciudad_destino","combi","datos_adicionales")
+    fields = ("ciudad_origen","ciudad_destino","combi","datos_adicionales")
 
     def get_readonly_fields(self, request,obj):
         if obj:
@@ -74,6 +80,7 @@ class RutasAdmin(admin.ModelAdmin):
 
 class ViajesAdmin(admin.ModelAdmin):
     list_display=("ruta","fecha_hora","precio","datos_adicionales")
+    fields = ("ruta","fecha_hora","precio","datos_adicionales")
 
     def get_readonly_fields(self, request,obj):
         if obj:
