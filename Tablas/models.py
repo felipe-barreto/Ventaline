@@ -73,8 +73,9 @@ class Lugar(sd.SoftDeletionModel):
     
     def clean(self):
         for l in Lugar.objects.all():
-            if ((l.provincia == self.provincia) and (l.nombre_ciudad==self.nombre_ciudad)):
-                raise ValidationError('Ya hay una con esta provincia y ciudad, por favor ingrese otra')
+            if self != l:
+                if ((l.provincia == self.provincia) and (l.nombre_ciudad==self.nombre_ciudad)):
+                    raise ValidationError('Ya hay una con esta provincia y ciudad, por favor ingrese otra')
     
 class Ruta(sd.SoftDeletionModel):
     ciudad_origen = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_origen")
@@ -86,8 +87,9 @@ class Ruta(sd.SoftDeletionModel):
         if (self.ciudad_origen == self.ciudad_destino):
             raise ValidationError(_('La ciudad origen y destino deben ser distintas'))
         for r in Ruta.objects.all():
-            if ((self.ciudad_origen==r.ciudad_origen) and (self.ciudad_origen==r.ciudad_origen)):
-                raise ValidationError('Ya hay una ruta con este origen y destino')
+            if self != r:
+                if((self.ciudad_origen==r.ciudad_origen) and (self.ciudad_destino==r.ciudad_destino)):
+                    raise ValidationError('Ya hay una ruta con este origen y destino')
     
     def __str__(self):
         return 'Origen: (%s, %s), Destino: (%s, %s) Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
@@ -116,9 +118,10 @@ class Viaje(sd.SoftDeletionModel):
         return 'Ruta: ( %s ), Fecha: %s, Precio: %s'%(self.ruta,self.fecha_hora,self.precio)
     
     def clean(self):
-        for r in Viaje.objects.all():
-            if ((self.ruta==r.ruta) and (self.fecha_hora==r.fecha_hora)):
-                raise ValidationError('Ya hay un viaje con esta ruta y fecha-hora')
+        for v in Viaje.objects.all():
+            if self != v:
+                if ((self.ruta==v.ruta) and (self.fecha_hora==v.fecha_hora)):
+                    raise ValidationError('Ya hay un viaje con esta ruta y fecha-hora')
 
     def delete(self):
         nuevo_origen = Lugar(provincia=self.ruta.ciudad_origen.provincia,nombre_ciudad=self.ruta.ciudad_origen.nombre_ciudad,observaciones=self.ruta.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
