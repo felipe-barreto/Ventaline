@@ -4,15 +4,10 @@ import Tablas.models as tablas
 # Register your models here.
 
 class ClientesAdmin(admin.ModelAdmin):
-    list_display=("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
+    list_display=("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
-    fields = ("nombre","apellido","dni","email","contraseña","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
+    fields = ("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
 
-    def get_readonly_fields(self,request,obj):
-        if obj:
-            return ['email','contraseña','is_deleted','deleted_at']
-        else:
-            return ['is_deleted','deleted_at']
 
     def has_add_permission(self,request):
         return False

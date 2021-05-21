@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import home
+from PaginaWeb.views import home, registrar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', home),
+    path('home/', home, name='home'),
+    path('registrar/', registrar, name='registrar'),
 ]

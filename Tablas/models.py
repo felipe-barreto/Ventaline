@@ -3,24 +3,111 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from Tablas import softdeletion as sd
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser, User
+from datetime import date, datetime, timedelta
 
 # Create your models here.
 
-class Cliente(sd.SoftDeletionModel):
-    nombre = models.CharField(max_length=20)
-    apellido = models.CharField(max_length=20)
-    dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
-    email = models.EmailField(max_length=40,validators=[sd.validar_email_cliente])
-    contraseña = models.CharField(max_length=15)
-    fecha_nacimiento = models.DateField()
-    gold = models.BooleanField()
-    tarjeta_cod_seguridad = models.CharField(max_length=3)
-    tarjeta_fecha_vencimiento = models.DateField()
-    tarjeta_nombre_titular = models.CharField(max_length=40)
-    tarjeta_numero = models.CharField(max_length=16)
+##################################################################################################
+#User customizado
+##################################################################################################
+
+# src/users/model.py
+from django.contrib.auth.base_user import BaseUserManager
+from django.utils.translation import ugettext_lazy as _
+
+
+class CustomUserManager(BaseUserManager):
+    """
+    Custom user model manager where email is the unique identifiers
+    for authentication instead of usernames.
+    """
+    def create_user(self, email, password, **extra_fields):
+        """
+        Create and save a User with the given email and password.
+        """
+        if not email:
+            raise ValueError(_('The Email must be set'))
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Create and save a SuperUser with the given email and password.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
+        return self.create_user(email, password, **extra_fields)
+
+class CustomUser(AbstractUser,sd.SoftDeletionModel):
+    username = None
+    email = models.EmailField(_('email address'), unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     def __str__(self):
-        return 'Email: %s, Nombre: %s, Apellido: %s'%(self.email, self.nombre, self.apellido)
+        return self.email
+
+##################################################################################################
+#Clases
+##################################################################################################
+
+class Cliente(sd.SoftDeletionModel):
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING)
+    dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
+    #email = models.EmailField(max_length=40,validators=[sd.validar_email_cliente])
+    fecha_nacimiento = models.DateField()
+    gold = models.BooleanField(default=False)
+    tarjeta_cod_seguridad = models.CharField(max_length=3,null=True,blank=True)
+    tarjeta_fecha_vencimiento = models.DateField(null=True,blank=True,)
+    tarjeta_nombre_titular = models.CharField(max_length=40,null=True,blank=True)
+    tarjeta_numero = models.CharField(max_length=16,null=True,blank=True)
+
+    def __str__(self):
+        return 'Email: %s'%(self.usuario,)
+    
+    def delete(self):
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.usuario.email in u.email:
+                coincidencias += 1 
+        self.usuario.email = self.usuario.email + str(coincidencias)
+        self.usuario.delete()
+        return super(Cliente,self).delete()
+    
+    def clean(self):
+
+        if (date.today() - timedelta(days=(18*365))) < self.fecha_nacimiento:
+            raise ValidationError('Debes ser mayor de edad para poder registrarte')
+
+        if (self.gold == False)and ((self.tarjeta_cod_seguridad!=None) or (self.tarjeta_fecha_vencimiento!=None) or (self.tarjeta_numero!=None) or (self.tarjeta_nombre_titular!=None)):
+            raise ValidationError('Si quiere ingresar una tarjeta debe ser gold')
+        
+        if (self.gold) and ((self.tarjeta_cod_seguridad==None) or (self.tarjeta_fecha_vencimiento==None) or (self.tarjeta_numero==None) or (self.tarjeta_nombre_titular==None)):
+            raise ValidationError('Debe completar todos los campos de la tarjeta')
+
+        if self.gold and ((len(self.tarjeta_numero)<16)):
+            raise ValidationError('El número de la tarjeta debe ser de 16 caracteres')
+        
+        if self.gold and ((len(self.tarjeta_cod_seguridad)<3)):
+            raise ValidationError('El código de seguridad de la tarjeta debe ser de 3 caracteres')
+        
+        if self.gold and (self.tarjeta_fecha_vencimiento<=date.today()):
+            raise ValidationError('La tarjeta está vencida')
+
     
 class Chofer(sd.SoftDeletionModel):
     nombre = models.CharField(max_length=20)
