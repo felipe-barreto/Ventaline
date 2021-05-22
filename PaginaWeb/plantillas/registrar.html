@@ -1,17 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <meta http-equiv="X-UA-Compatible" content="ie-edge">
-        <title>Registro</title>
-    </head>
-    <body>
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
         <form method='POST' action="{% url 'registrar' %}">
             {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Registrate en Ventaline</legend>
             {{ form.as_p }}
             {{ cliente_form.as_p}}
-            <input type="submit" value="Registrarse">
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Registrarse</button>
+        </div>
         </form>
-    </body>
-</html>
+        <div class="border-top pt-3">
+            <small class= "text-muted">
+                Ya tengo una cuenta <a class="ml-2" href="/login"> Iniciar Sesion</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}

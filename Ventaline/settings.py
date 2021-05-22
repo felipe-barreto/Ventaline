@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Tablas',
     'PaginaWeb',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +127,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'Tablas.CustomUser'
+
+LOGIN_REDIRECT_URL = 'home'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
