@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <h1>Mi perfil</h1>
+        <body>
+            {% if cliente %}
+                <div>
+                    <h2>{{ cliente.usuario.first_name }}</h2>
+                </div>
+                <div>
+                    <h2>{{ cliente.usuario.last_name }}</h2>
+                </div>
+                <div>
+                    <h2>{{ cliente.usuario.email }}</h2>
+                </div>
+                <div>
+                    <h2>{{ cliente.dni }}</h2>
+                </div>
+                <div>
+                    <h2>{{ cliente.fecha_nacimiento }}</h2>
+                </div>
+                <div>
+                    {% if cliente.gold %}
+                        <h2>Es un cliente gold</h2>
+                        <h2>{{ cliente.tarjeta_cod_seguridad }}</h2>
+                        <h2>{{ cliente.tarjeta_fecha_vencimiento }}</h2>
+                        <h2>{{ cliente.tarjeta_nombre_titular }}</h2>
+                        <h2>{{ cliente.tarjeta_numero }}</h2>
+                    {% endif %}
+                    {% if cliente.gold == False %}
+                        <h2>No es un cliente gold</h2>
+                    {% endif %}
+                </div>
+            {% else %}
+                <h1>No hay un cliente con ese dni</h1>
+            {% endif %}
+        </body>
+    </head>
+</html>

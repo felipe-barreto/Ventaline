@@ -1,11 +1,12 @@
+from django.http.request import RAISE_ERROR
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import ExtendedUserCreationForm, ClienteCreationForm
+from Tablas.models import Cliente as c
 
 def home(request):
     return render(request, 'home.html')
-
 
 def registrar(request):
     if request.method == 'POST':
@@ -27,3 +28,12 @@ def registrar(request):
         cliente_form = ClienteCreationForm()
     context = {'form': form, 'cliente_form': cliente_form}
     return render(request, 'registrar.html', context)
+
+def perfil(request):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+    contexto = {"cliente":cliente}
+    return render(request,"perfil.html",contexto)
