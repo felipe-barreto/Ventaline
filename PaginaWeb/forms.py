@@ -20,7 +20,14 @@ class ExtendedUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class ClienteCreationForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ('dni', 'fecha_nacimiento','gold','tarjeta_nombre_titular','tarjeta_numero','tarjeta_cod_seguridad','tarjeta_fecha_vencimiento',)
+        widgets = {
+            'fecha_nacimiento': DateInput(),
+            'tarjeta_fecha_vencimiento': DateInput(),
+        }

@@ -4,6 +4,12 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import ExtendedUserCreationForm, ClienteCreationForm
 from Tablas.models import Cliente as c
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+from PaginaWeb.modificar_perfil import ModificarNombre
+from django import forms
 
 def home(request):
     return render(request, 'home.html')
@@ -37,3 +43,20 @@ def perfil(request):
             cliente = cl
     contexto = {"cliente":cliente}
     return render(request,"perfil.html",contexto)
+
+def perfil_nombre(request):
+    return render(request,"perfil_nombre.html")
+
+@method_decorator(login_required, name="dispatch")
+class NombreUpdate(UpdateView):
+    form_class = ModificarNombre
+    success_url = reverse_lazy("perfil")
+
+    def get_object(self):
+        return self.request.user
+
+    def get_form(self, form_class=None):
+        form = super(NombreUpdate,self).get_form()
+        form.fields["nombre"].widget = forms.TextInput(attrs={"class":"form-control mb-2", "placeholder":"Ingrese su nuevo nombre"})
+        print(form.fields["nombre"])
+        return form
