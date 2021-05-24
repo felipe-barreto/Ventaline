@@ -3,4 +3,25 @@
 {% block content %}
 <h1>HOME</h1>
 {% endblock content %}
-
+{% block comentarios %}
+    <div class="content-section">
+        <p class='text-muted'>Comentarios de nuestros clientes
+            {% if not comentarios %}
+                No hay comentarios
+                {% if user.cliente %} 
+                    <a href="{% url 'agregar_comentario' %}">Agregar un comentario</a>
+                {% endif %}
+            {% else %}
+                <ul class="list-group">
+                {% for c in comentarios %}
+                    <li class="list-group-item list-group-item-light" style="font-size:13px"> {{c.fecha_de_creacion}} <hr> <strong>{{c.contenido}} </strong> <hr> Usuario: {{c.autor.usuario.first_name}} </li>
+                {% endfor %}
+                </ul>
+                <br>
+                {% if user.cliente %} 
+                    <a href="{% url 'agregar_comentario' %}">Agregar un comentario</a>
+                {% endif %}
+            {% endif %}
+        </p>
+        </div>
+{% endblock %}

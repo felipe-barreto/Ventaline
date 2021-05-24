@@ -65,7 +65,7 @@ class CustomUser(AbstractUser,sd.SoftDeletionModel):
 ##################################################################################################
 
 class Cliente(sd.SoftDeletionModel):
-    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING)
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente')
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
     #email = models.EmailField(max_length=40,validators=[sd.validar_email_cliente])
     fecha_nacimiento = models.DateField()
@@ -223,3 +223,8 @@ class Viaje(sd.SoftDeletionModel):
         nueva_ruta.save()
         self.ruta = nueva_ruta
         return super(Viaje,self).delete()
+
+class Comentario(sd.SoftDeletionModel):
+    autor = models.ForeignKey(Cliente, related_name="comentarios", on_delete=models.DO_NOTHING)
+    contenido =  models.TextField(max_length=400)
+    fecha_de_creacion =  models.DateTimeField()

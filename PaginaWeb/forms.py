@@ -1,5 +1,5 @@
 from django import forms
-from Tablas.models import CustomUser, Cliente
+from Tablas.models import Comentario, CustomUser, Cliente
 from django.contrib.auth.forms import UserCreationForm
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -30,4 +30,12 @@ class ClienteCreationForm(forms.ModelForm):
         widgets = {
             'fecha_nacimiento': DateInput(),
             'tarjeta_fecha_vencimiento': DateInput(),
+        }
+    
+class AgregarComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ('contenido',)
+        widgets = {
+            'contenido': forms.Textarea(attrs={'class': 'form-control'})
         }

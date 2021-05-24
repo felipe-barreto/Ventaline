@@ -1,18 +1,24 @@
+from django.db.models.fields import CommaSeparatedIntegerField
 from django.http.request import RAISE_ERROR
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import ExtendedUserCreationForm, ClienteCreationForm
+from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
 from Tablas.models import Cliente as c
+from Tablas.models import Comentario as comentarios
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
 from PaginaWeb.modificar_perfil import ModificarNombre
 from django import forms
+from datetime import datetime
+from itertools import islice
 
 def home(request):
-    return render(request, 'home.html')
+    ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
+    context =  {'comentarios': ultimos_comentarios}
+    return render(request, 'home.html', context)
 
 def registrar(request):
     if request.method == 'POST':
@@ -60,3 +66,15 @@ class NombreUpdate(UpdateView):
         form.fields["nombre"].widget = forms.TextInput(attrs={"class":"form-control mb-2", "placeholder":"Ingrese su nuevo nombre"})
         print(form.fields["nombre"])
         return form
+
+class AgregarComentarioView(CreateView):
+    model = comentarios
+    form_class =  AgregarComentarioForm
+    template_name = 'agregar_comentario.html'
+
+    def form_valid(self, form):
+        form.instance.autor = self.request.user.cliente
+        form.instance.fecha_de_creacion = datetime.today()
+        return super().form_valid(form)
+
+    success_url = reverse_lazy('home')
