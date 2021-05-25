@@ -8,7 +8,7 @@ from Tablas.models import Cliente as c
 from Tablas.models import Comentario as comentarios
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy
 from PaginaWeb.modificar_perfil import ModificarNombre
 from django import forms
@@ -78,3 +78,8 @@ class AgregarComentarioView(CreateView):
         return super().form_valid(form)
 
     success_url = reverse_lazy('home')
+
+class ModificarComentarioView(UpdateView):
+    model = comentarios
+    template_name = 'modificar_comentario.html'
+    fields = ('contenido',)

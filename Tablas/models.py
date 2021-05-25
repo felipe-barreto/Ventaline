@@ -5,6 +5,7 @@ from Tablas import softdeletion as sd
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, User
 from datetime import date, datetime, timedelta
+from django.urls import reverse
 
 # Create your models here.
 
@@ -228,3 +229,6 @@ class Comentario(sd.SoftDeletionModel):
     autor = models.ForeignKey(Cliente, related_name="comentarios", on_delete=models.DO_NOTHING)
     contenido =  models.TextField(max_length=400)
     fecha_de_creacion =  models.DateTimeField()
+
+    def get_absolute_url (self):
+        return reverse('home')

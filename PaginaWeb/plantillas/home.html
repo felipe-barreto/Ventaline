@@ -14,7 +14,12 @@
             {% else %}
                 <ul class="list-group">
                 {% for c in comentarios %}
-                    <li class="list-group-item list-group-item-light" style="font-size:13px"> {{c.fecha_de_creacion}} <hr> <strong>{{c.contenido}} </strong> <hr> Usuario: {{c.autor.usuario.first_name}} </li>
+                    <li class="list-group-item list-group-item-light" style="font-size:13px"> {{c.fecha_de_creacion}} <hr> 
+                        <strong>{{c.contenido}} </strong> 
+                        {% if c.autor == user.cliente %}
+                            <a href="{% url 'modificar_comentario' c.pk %}">(Editar)</a>
+                        {% endif %} 
+                    <hr> Usuario: {{c.autor.usuario.first_name}} </li>
                 {% endfor %}
                 </ul>
                 <br>
