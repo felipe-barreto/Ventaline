@@ -1,7 +1,17 @@
 
 {% extends "base.html" %}
+
 {% block content %}
-<h1>HOME</h1>
+<h2>Últimos viajes:</h2>
+{% if not viajes %}
+    No hay viajes disponibles en este momento
+{% else %}
+        <ul class="list-group">
+        {% for viaje in viajes %}
+            {% include "viaje.html" %}
+        {% endfor %}
+        </ul>
+{% endif %}
 {% endblock content %}
 
 {% block comentarios %}

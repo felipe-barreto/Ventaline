@@ -1,0 +1,11 @@
+<li class="list-group-item list-group-item-light" style="font-size:16px">
+    <p><strong>Origen: </strong> {{viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{viaje.ruta.ciudad_destino}}
+    </p>
+    <p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Asientos disponibles: </strong> {{viaje.ruta.combi.cant_asientos}}
+    </p>
+    <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
+    </p>
+    {% if user.cliente %}
+    <p style='text-align: right;'><a href="{% url 'perfil' %}" >Comprar pasajes</a></p>
+    {% endif %}
+</li>

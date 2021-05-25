@@ -13,10 +13,13 @@ from django.urls import reverse_lazy
 from datetime import datetime, date, timedelta
 from itertools import islice
 from django.utils.dateparse import parse_date
+from Tablas.models import Viaje as viajes
 
 def home(request):
+    viajes_ordenados = sorted(list(filter(lambda each: each.viaje_futuro(), viajes.objects.all())),key=lambda a: a.fecha_hora)
+    ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
     ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
-    context =  {'comentarios': ultimos_comentarios}
+    context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
     return render(request, 'home.html', context)
 
 def registrar(request):

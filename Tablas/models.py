@@ -224,6 +224,9 @@ class Viaje(sd.SoftDeletionModel):
         nueva_ruta.save()
         self.ruta = nueva_ruta
         return super(Viaje,self).delete()
+    
+    def viaje_futuro(self):
+        return (self.fecha_hora>timezone.now())
 
 class Comentario(sd.SoftDeletionModel):
     autor = models.ForeignKey(Cliente, related_name="comentarios", on_delete=models.DO_NOTHING)
