@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import home, registrar, perfil, NombreUpdate, AgregarComentarioView, ModificarComentarioView
+from PaginaWeb.views import home, registrar, perfil, perfil_nombre, perfil_apellido, perfil_dni, perfil_fecha_de_nacimiento, AgregarComentarioView, ModificarComentarioView
 from django.contrib.auth import views as auth_views
 
 
@@ -27,7 +27,10 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name = 'login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name = 'logout.html'), name='logout'),
     path('perfil/', perfil, name='perfil'),
-    path('perfil/nombre/', NombreUpdate.as_view(template_name = 'perfil_nombre.html'), name='perfil_nombre'),
+    path('perfil/nombre/', perfil_nombre, name='perfil_nombre'),
+    path('perfil/apellido/', perfil_apellido, name='perfil_apellido'),
+    path('perfil/dni/', perfil_dni, name='perfil_dni'),
+    path('perfil/fecha_de_nacimiento/', perfil_fecha_de_nacimiento, name='perfil_fecha_de_nacimiento'),
     path('agregar_comentario/', AgregarComentarioView.as_view(template_name = 'agregar_comentario.html'), name='agregar_comentario'),
     path('editar_comentario/<int:pk>', ModificarComentarioView.as_view(), name='modificar_comentario'),
 ]

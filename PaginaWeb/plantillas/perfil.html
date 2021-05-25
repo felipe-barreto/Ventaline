@@ -1,84 +1,39 @@
-{% load static %}
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
 <html>
     <head>
-            <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{% static 'PaginaWeb/main.css' %}">
-        {% if titulo %}
-        <title>Ventaline - {{titulo}}</title>
-        {% else %}
-        <title>Ventaline</title>
-        {% endif %}
-    </head>
-    <body>
-          
-          
-        <header class="site-header">
-            <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-            <div class="container">
-                <a class="navbar-brand mr-4" href="/">Ventaline</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarToggle">
-                <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="/home">Home</a>
-                    <a class="nav-item nav-link" href="/about">Nosotros</a>
-                </div>
-                <!-- Navbar Right Side -->
-                    <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <a class="nav-item nav-link" href="{% url 'perfil' %}">Mi perfil</a>
-                        <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar Sesion</a>
-                    {% else %}
-                        <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
-                        <a class="nav-item nav-link" href="{% url 'registrar' %}">Registrarse</a>
-                    {% endif %}
-                    </div>
-                </div>
-            </div>
-            </nav>
-        </header>
-
-<html>
-    <head>
-        <h1>Mi perfil</h1>
+        <h1><strong>Mi perfil</strong></h1>
         <body>
             {% if cliente %}
                 <div>
-                    <h2>{{ cliente.usuario.first_name }}</h2>
-                    {{ form.link }}
-                    <!-- <input type="nombre" value="{{cliente.usuario.first_name}}" class="form-control mt-3" readonly> -->  
+                    <h3>Nombre: {{ cliente.usuario.first_name }}</h3>
                     <p class="mt-3">Si desea cambiar su nombre haz clic <a href="{% url 'perfil_nombre' %}">aquí</a>.</p>
-                    <!-- <input type="sumbit" class="btn btn-primary btn-block mt-3" value="Actualizar"> -->  
                 </div>
                 <div>
-                    <h2>{{ cliente.usuario.last_name }}</h2>
+                    <h3>Apellido: {{ cliente.usuario.last_name }}</h3>
+                    <p class="mt-3">Si desea cambiar su apellido haz clic <a href="{% url 'perfil_apellido' %}">aquí</a>.</p>
                 </div>
                 <div>
-                    <h2>{{ cliente.usuario.email }}</h2>
+                    <h3>Email: {{ cliente.usuario.email }}</h3>
                 </div>
                 <div>
-                    <h2>{{ cliente.dni }}</h2>
+                    <h3>Dni: {{ cliente.dni }}</h3>
+                    <p class="mt-3">Si desea cambiar su dni haz clic <a href="{% url 'perfil_dni' %}">aquí</a>.</p>
                 </div>
                 <div>
-                    <h2>{{ cliente.fecha_nacimiento }}</h2>
+                    <h3>Fecha de nacimiento: {{ cliente.fecha_nacimiento }}</h3>
+                    <p class="mt-3">Si desea cambiar su fecha de nacimiento haz clic <a href="{% url 'perfil_fecha_de_nacimiento' %}">aquí</a>.</p>
                 </div>
                 <div>
                     {% if cliente.gold %}
-                        <h2>Es un cliente gold</h2>
-                        <h2>{{ cliente.tarjeta_cod_seguridad }}</h2>
-                        <h2>{{ cliente.tarjeta_fecha_vencimiento }}</h2>
-                        <h2>{{ cliente.tarjeta_nombre_titular }}</h2>
-                        <h2>{{ cliente.tarjeta_numero }}</h2>
+                        <h3>Tipo de cliente: Gold</h3>
+                        <h3>Código de seguridad de la tarjeta: {{ cliente.tarjeta_cod_seguridad }}</h3>
+                        <h3>Fecha de vencimiento de la tarjeta: {{ cliente.tarjeta_fecha_vencimiento }}</h3>
+                        <h3>Nombre del titular de la tarjeta: {{ cliente.tarjeta_nombre_titular }}</h3>
+                        <h3>Número de la tarjeta: {{ cliente.tarjeta_numero }}</h3>
                     {% endif %}
                     {% if cliente.gold == False %}
-                        <h2>No es un cliente gold</h2>
+                        <h3>Tipo de cliente: Común</h3>
                     {% endif %}
                 </div>
             {% else %}
@@ -87,3 +42,4 @@
         </body>
     </head>
 </html>
+{% endblock content %}

@@ -30,12 +30,12 @@ class ClienteCreationForm(forms.ModelForm):
         widgets = {
             'fecha_nacimiento': DateInput(),
             'tarjeta_fecha_vencimiento': DateInput(),
-        }
-    
+        } 
+
 class AgregarComentarioForm(forms.ModelForm):
     class Meta:
         model = Comentario
         fields = ('contenido',)
         widgets = {
             'contenido': forms.Textarea(attrs={'class': 'form-control'})
-        }
+        } 
