@@ -1,5 +1,6 @@
 from django import forms
-from Tablas.models import Comentario, CustomUser, Cliente
+from django.forms.fields import CharField
+from Tablas.models import Comentario, CustomUser, Cliente, Viaje
 from django.contrib.auth.forms import UserCreationForm
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -38,4 +39,6 @@ class AgregarComentarioForm(forms.ModelForm):
         fields = ('contenido',)
         widgets = {
             'contenido': forms.Textarea(attrs={'class': 'form-control'})
-        } 
+        }
+        
+        

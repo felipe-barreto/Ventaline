@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <form method='POST' action="{% url 'buscar_viaje' %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Buscá tu viaje</legend>
+                <form action='/contacto/' method='POST'>{% csrf_token %}
+                    <p>Ciudad origen: <input type='text' name='ciudad_origen' maxlength="100"></p>
+                    <p>Ciudad destino: <input type='text' name='ciudad_destino' maxlength="40"></p>
+                    <p>Fecha de salida: <input type='date' name='fecha_salida'></p>
+                    <input type='submit' value='Buscar' class="btn btn-outline-info">
+                </fieldset>
+                </form>
+    </div>
+    {% if not viajes %}
+    <div>No se encontraron viajes con estas características</div>
+    {% else %}
+        <ul class="list-group">
+        {% for viaje in viajes %}
+            {% include "viaje.html" %}
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock content %}

@@ -165,6 +165,9 @@ class Lugar(sd.SoftDeletionModel):
                 if ((l.provincia == self.provincia) and (l.nombre_ciudad==self.nombre_ciudad)):
                     raise ValidationError('Ya hay una con esta provincia y ciudad, por favor ingrese otra')
     
+    def contiene(self, str):
+        return (str.lower() in self.nombre_ciudad.lower())
+    
 class Ruta(sd.SoftDeletionModel):
     ciudad_origen = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_origen")
     ciudad_destino = models.ForeignKey(Lugar,on_delete=models.PROTECT,related_name="ciudad_destino")
@@ -227,6 +230,9 @@ class Viaje(sd.SoftDeletionModel):
     
     def viaje_futuro(self):
         return (self.fecha_hora>timezone.now())
+    
+    def fecha_coincide(self,fecha):
+        return (self.fecha_hora.date() == fecha.date())
 
 class Comentario(sd.SoftDeletionModel):
     autor = models.ForeignKey(Cliente, related_name="comentarios", on_delete=models.DO_NOTHING)

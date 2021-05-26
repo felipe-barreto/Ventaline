@@ -196,3 +196,20 @@ class ModificarComentarioView(UpdateView):
     model = comentarios
     template_name = 'modificar_comentario.html'
     fields = ('contenido',)
+
+
+def buscar_viaje(request):
+    lista_viajes = list(sorted(list(filter(lambda each: each.viaje_futuro(), viajes.objects.all())),key=lambda a: a.fecha_hora))
+    if request.method == 'POST':
+        if request.POST['ciudad_origen']:
+            lista_viajes = list(filter(lambda x: x.ruta.ciudad_origen.contiene(request.POST['ciudad_origen']), lista_viajes))
+        
+        if request.POST['ciudad_destino']:
+            lista_viajes = list(filter(lambda x: x.ruta.ciudad_destino.contiene(request.POST['ciudad_destino']), lista_viajes))
+        
+        if request.POST['fecha_salida']:
+            fecha = datetime.strptime(str(request.POST['fecha_salida']), '%Y-%m-%d')
+            lista_viajes = list(filter(lambda x: x.fecha_coincide(fecha), lista_viajes))
+
+    context = {'viajes': lista_viajes,}
+    return render(request, 'buscar_viaje.html', context)
