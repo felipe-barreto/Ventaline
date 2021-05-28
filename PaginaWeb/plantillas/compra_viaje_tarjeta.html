@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <form method='POST' action="{% url 'compra_viaje_tarjeta' viaje_id %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Ingresa una tarjeta de crédito</legend>
+                {% if help_text %}
+                    <p>{{help_text}}</p>
+                {% endif %}
+                <p>Nombre titular: <input type='text' name='nom_titular' required></p>
+                <p>Número: <input name="num_tarjeta"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    type = "number"
+                    maxlength = "16"
+                    required
+                 /></p>
+                <p>Código de seguridad: <input name="cod_tarjeta"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    type = "number"
+                    maxlength = "3"
+                    required
+                 /></p>
+                <p>Fecha de vencimiento: <input id="datefield" type='date' min={{fecha_hoy}} required></input></p>
+                <p><input type="submit" name="siguiente" value="Siguiente" class="btn btn-outline-info">
+                    <input type="submit" name="cancelar" value="Cancelar" class="btn btn-outline-info"></p>
+        </fieldset>
+        </form>
+{% endblock content %}

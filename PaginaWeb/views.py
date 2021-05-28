@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
-from Tablas.models import Cliente as c
+from Tablas.models import Cliente as c, Compra_Producto
 from Tablas.models import Comentario as comentarios
 from django.views.generic import CreateView, UpdateView
 from Tablas.models import CustomUser
@@ -14,9 +14,12 @@ from datetime import datetime, date, timedelta
 from itertools import islice
 from django.utils.dateparse import parse_date
 from Tablas.models import Viaje as viajes
+from Tablas.models import Compra
+from Tablas.models import Producto
+import pytz
 
 def home(request):
-    viajes_ordenados = sorted(list(filter(lambda each: each.viaje_futuro(), viajes.objects.all())),key=lambda a: a.fecha_hora)
+    viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
     ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
     ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
     context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
@@ -199,7 +202,8 @@ class ModificarComentarioView(UpdateView):
 
 
 def buscar_viaje(request):
-    lista_viajes = list(sorted(list(filter(lambda each: each.viaje_futuro(), viajes.objects.all())),key=lambda a: a.fecha_hora))
+    lista_viajes = list(sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora))
+    #each.viaje_futuro() va a pasar a ser each.viaje_disponible ya que hay que tener en cuenta los viajes llenos
     if request.method == 'POST':
         if request.POST['ciudad_origen']:
             lista_viajes = list(filter(lambda x: x.ruta.ciudad_origen.contiene(request.POST['ciudad_origen']), lista_viajes))
@@ -213,3 +217,89 @@ def buscar_viaje(request):
 
     context = {'viajes': lista_viajes,}
     return render(request, 'buscar_viaje.html', context)
+
+def compra_viaje_asientos(request, viaje):
+    v = viajes.objects.get(id=viaje)
+    if request.method == 'POST':
+        if request.POST.get('siguiente'):
+            precio = int(request.POST['cant_pasajes'])*v.precio
+            compra_dic = {'precio':precio, 'asientos':request.POST['cant_pasajes']}
+            request.session['compra'] = compra_dic
+            return redirect('compra_viaje_productos', viaje, 0)
+        else:
+            return redirect('home')
+    context = {'viaje': v,}
+    return render(request, 'compra_viaje_asientos.html', context)
+
+def compra_viaje_productos(request, viaje, producto):
+    context = {'viaje':viaje, 'productos':list(Producto.objects.all()),}
+    if request.method == 'POST':
+        if request.POST.get('agregar'):
+            prod = Producto.objects.get(id=producto)
+            lis = list(request.session['prods_sel'])
+            lis.append([prod.nombre, request.POST['cant_producto'], producto])
+            request.session['prods_sel'] = lis
+            #request.session['prods_sel'].extend([[prod.nombre, request.POST['cant_producto']]])
+        elif request.POST.get('buscar'):
+            context['productos'] = list(filter(lambda x: x.contiene(request.POST['nombre_producto']), list(Producto.objects.all())))
+        elif request.POST.get('siguiente'):
+            if request.user.cliente.gold:
+                return redirect('compra_viaje_confirmar', viaje)
+            else:
+                return redirect('compra_viaje_tarjeta', viaje)
+        else:
+            return redirect('home')
+    elif request.method != 'POST' and producto==0:
+        request.session['prods_sel'] = [] 
+    else:
+        prod_eliminar = Producto.objects.get(id=producto)
+        lis = list(request.session['prods_sel'])
+        for p in lis:
+            if p[0]==prod_eliminar.nombre:
+                lis.remove(p)
+                break
+        request.session['prods_sel'] = lis
+
+    for p in request.session['prods_sel']:
+        prod = Producto.objects.get(nombre=p[0])
+        if prod in context['productos']:
+            context['productos'].remove(prod)
+
+    context['productos_seleccionados'] = request.session['prods_sel']
+    return render(request, 'compra_viaje_productos.html', context)
+
+def compra_viaje_confirmar(request, viaje):
+    v = viajes.objects.get(id=viaje)
+    precio_total=int(request.session['compra']['precio'])
+    for prod in request.session['prods_sel']:
+        p = Producto.objects.get(nombre=prod[0])
+        precio_total += int((p.precio*int(prod[1])))
+    if request.user.cliente.gold:
+        precio_total = (precio_total*0.9)
+    compra = Compra(viaje=v,precio=precio_total,cliente=request.user.cliente,asientos=request.session['compra']['asientos'])
+    context = {'compra': compra, 'prods_sel': request.session['prods_sel']}
+    if request.method == 'POST':
+        if request.POST.get('confirmar'):
+            compra.save()
+            for prod in request.session['prods_sel']:
+                compra_prod = Compra_Producto(compra=compra, producto=(Producto.objects.get(nombre=prod[0])), cantidad= int(prod[1]))
+                compra_prod.save()
+            return redirect('home')
+        else:
+            return redirect('home')
+    return render(request, 'compra_viaje_confirmar.html', context)
+
+def compra_viaje_tarjeta(request, viaje):
+    help_text=None
+    if request.method == 'POST':
+        if request.POST.get('siguiente'):
+            if len(str(request.POST['num_tarjeta']))<16:
+                help_text = 'El número de tarjeta debe ser de 16 dígitos'
+            elif len(str(request.POST['cod_tarjeta']))<3:
+                help_text = 'El código de tarjeta debe ser de 3 dígitos'
+            else:
+                return redirect('compra_viaje_confirmar', viaje)
+        else:
+            return redirect('home')
+    context = {'viaje_id': viaje, 'fecha_hoy': datetime.today().strftime('%Y-%m-%d'), 'help_text': help_text}
+    return render(request, 'compra_viaje_tarjeta.html', context)

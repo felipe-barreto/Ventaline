@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-section">
+    <h3>Viaje:</h3>
+    <p><strong>Origen: </strong> {{compra.viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{compra.viaje.ruta.ciudad_destino}}
+    </p>
+    <p><strong>Tipo de combi: </strong> {{compra.viaje.ruta.combi.tipo}} | <strong>Asientos disponibles: </strong> {{compra.viaje.asientos_disponibles}}
+    </p>
+    <p><strong>Fecha y hora de salida: </strong> {{compra.viaje.fecha_hora}}
+    </p>
+    <p><strong>Cantidad de pasajes:</strong> {{compra.asientos}}</p>
+</div>
+<div class="content-section">
+    <h3>Productos:</h3>
+    {% if prods_sel %}
+    {% for producto in prods_sel %}
+        <p><strong>{{ producto.0 }}</strong> - cantidad: {{producto.1}}</p>
+    {% endfor %}
+    {% else %}
+        <p>No hay productos seleccionados</p>
+    {% endif %}
+</div>
+<div class="content-section">
+    <h4><strong>Precio total: </strong>${{compra.precio}}</h4>
+    <form method='POST' action="{% url 'compra_viaje_confirmar' compra.viaje.pk %}"> {% csrf_token %}
+        <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">
+            &nbsp<input type='submit' name='confirmar' value='Confirmar compra' class="btn btn-outline-info"></p>
+    </form>
+</div>
+{% endblock content %}

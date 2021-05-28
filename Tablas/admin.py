@@ -83,6 +83,16 @@ class ViajesAdmin(admin.ModelAdmin):
         else:
             return ['is_deleted','deleted_at']
 
+class ComprasAdmin(admin.ModelAdmin):
+    def has_add_permission(self,request):
+        return False
+
+    def has_change_permission(self,request,obj=None):
+        return False
+    
+    def has_delete_permission(self,request,obj=None):
+        return False
+
 admin.site.register(tablas.Cliente, ClientesAdmin)
 admin.site.register(tablas.Chofer, ChoferesAdmin)
 admin.site.register(tablas.Combi, CombisAdmin)
@@ -91,3 +101,4 @@ admin.site.register(tablas.Lugar, LugaresAdmin)
 admin.site.register(tablas.Ruta, RutasAdmin)
 admin.site.register(tablas.Viaje, ViajesAdmin)
 admin.site.register(tablas.Comentario)
+admin.site.register(tablas.Compra, ComprasAdmin)

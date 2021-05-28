@@ -1,0 +1,9 @@
+<li class="list-group-item list-group-item-light" style="font-size:16px">
+<form method='POST' action="{% url 'compra_viaje_productos' viaje producto.pk %}"> {% csrf_token %}
+    <p>{{producto.nombre}}</p>
+    <p>Precio por unidad: ${{producto.precio}}</p>
+        <p>Cantidad: <input type='number' name='cant_producto' min="1" max="15" value="1" onkeydown="return false">
+        &nbsp<input type='submit' name='agregar' value='Agregar' class="btn btn-outline-info">
+    </p>
+</form>
+</li>

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import buscar_viaje, home, registrar, perfil, perfil_nombre, perfil_apellido, perfil_dni, perfil_fecha_de_nacimiento, AgregarComentarioView, ModificarComentarioView
+from PaginaWeb.views import buscar_viaje,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta, home, registrar, perfil, perfil_nombre, perfil_apellido, perfil_dni, perfil_fecha_de_nacimiento, AgregarComentarioView, ModificarComentarioView
 from django.contrib.auth import views as auth_views
 
 
@@ -34,4 +34,8 @@ urlpatterns = [
     path('agregar_comentario/', AgregarComentarioView.as_view(template_name = 'agregar_comentario.html'), name='agregar_comentario'),
     path('editar_comentario/<int:pk>', ModificarComentarioView.as_view(), name='modificar_comentario'),
     path('buscar_viaje/', buscar_viaje, name='buscar_viaje'),
+    path('compra_viaje_asientos/<int:viaje>', compra_viaje_asientos, name='compra_viaje_asientos'),
+    path('compra_viaje_productos/<int:viaje>/<int:producto>', compra_viaje_productos, name='compra_viaje_productos'),
+    path('compra_viaje_confirmar/<int:viaje>', compra_viaje_confirmar, name='compra_viaje_confirmar'),
+    path('compra_viaje_tarjeta/<int:viaje>', compra_viaje_tarjeta, name='compra_viaje_tarjeta'),
 ]

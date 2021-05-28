@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-section">
+    <h2>Selección de productos</h2>
+    <h4>Elija los productos que desea comprar</h4>
+    <h5>Seleccionados:</h5>
+    {% if productos_seleccionados %}
+        {% for producto in productos_seleccionados %}
+            {% include "producto_seleccionado.html" %}
+        {% endfor %}
+    {% else %}
+        <p>No hay productos seleccionados</p>
+    {% endif %}
+    <form method='POST' action="{% url 'compra_viaje_productos' viaje 0 %}"> {% csrf_token %}
+    <p><input type='submit' name="cancelar" value='Cancelar' class="btn btn-outline-info">
+        <input type='submit' name="siguiente" value='Siguiente' class="btn btn-outline-info"></p>
+    </form>
+</div>
+<div class="content-section">
+    <form method='POST' action="{% url 'compra_viaje_productos' viaje 0 %}"> {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Buscá tus productos</legend>
+                <p>Producto: <input type='text' name='nombre_producto' maxlength="100">
+                    &nbsp<input type='submit' name='buscar' value='Buscar' class="btn btn-outline-info"></p>
+            </fieldset>
+            </form>
+</div>
+{% if not productos %}
+    <div>No se encontraron productos con ese nombre</div>
+    {% else %}
+        <ul class="list-group">
+        {% for producto in productos %}
+            {% include "producto.html" %}
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock content %}

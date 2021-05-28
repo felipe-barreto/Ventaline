@@ -1,11 +1,14 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models.fields import IntegerField
+from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.utils.translation import gettext_lazy as _
 from Tablas import softdeletion as sd
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, User
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from django.urls import reverse
+import pytz
 
 # Create your models here.
 
@@ -148,6 +151,9 @@ class Producto(sd.SoftDeletionModel):
     def __str__(self):
         return 'Nombre: %s, Tipo: %s, Precio: %s'%(self.nombre,self.tipo,self.precio)
     
+    def contiene(self, str):
+        return (str.lower() in self.nombre.lower())
+    
 class Lugar(sd.SoftDeletionModel):
     provincia = models.CharField(max_length=20)
     nombre_ciudad = models.CharField(max_length=20)
@@ -229,7 +235,16 @@ class Viaje(sd.SoftDeletionModel):
         return super(Viaje,self).delete()
     
     def viaje_futuro(self):
-        return (self.fecha_hora>timezone.now())
+        return (self.fecha_hora.replace(tzinfo=None)>datetime.now())
+    
+    def asientos_disponibles(self):
+        asientos_comprados = 0
+        for c in self.compras.all():
+            asientos_comprados += int(c.asientos)
+        return self.ruta.combi.cant_asientos-asientos_comprados
+    
+    def viaje_disponible(self):
+        return (self.viaje_futuro() and (self.asientos_disponibles()>0))
     
     def fecha_coincide(self,fecha):
         return (self.fecha_hora.date() == fecha.date())
@@ -241,3 +256,17 @@ class Comentario(sd.SoftDeletionModel):
 
     def get_absolute_url (self):
         return reverse('home')
+
+class Compra(models.Model):
+    viaje = ForeignKey(Viaje, related_name="compras", on_delete=models.DO_NOTHING,null=True,blank=True)
+    precio = IntegerField(null=True,blank=True)
+    cliente = ForeignKey(Cliente, related_name="compras", on_delete=models.DO_NOTHING, null=True,blank=True)
+    asientos = IntegerField(null=True,blank=True)
+
+    def __str__(self):
+        return 'Viaje: ( %s ) - Cliente: ( %s ) - Precio: ( %s )'%(self.viaje,self.cliente,self.precio)
+    
+class Compra_Producto(models.Model):
+    compra = ForeignKey(Compra, related_name="compra_producto", on_delete=models.DO_NOTHING, null=True, blank=True)
+    producto = ForeignKey(Producto, related_name="compra_producto", on_delete=models.DO_NOTHING, null=True, blank=True)
+    cantidad = IntegerField(null=True,blank=True)

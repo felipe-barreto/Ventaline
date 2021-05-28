@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="list-group-item list-group-item-light">
+<h3>Viaje:</h3>
+<p><strong>Origen: </strong> {{viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{viaje.ruta.ciudad_destino}}
+</p>
+<p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Asientos disponibles: </strong> {{viaje.asientos_disponibles}} | <strong>Precio por asiento: </strong> ${{viaje.precio}}
+</p>
+<p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
+</p>
+</div>
+<div class="list-group-item list-group-item-light">
+<h4>Elige la cantidad de pasajes que deseas:</h4>
+<form method='POST' action="{% url 'compra_viaje_asientos' viaje.pk %}">{% csrf_token %}
+    <fieldset class="form-group">
+    <p><input type='number' name='cant_pasajes' min="1" max="{{viaje.asientos_disponibles}}" required value="1" onkeydown="return false"></p>
+    <p><input type='submit' name="cancelar" value='Cancelar' class="btn btn-outline-info">
+    <input type='submit' name="siguiente" value='Siguiente' class="btn btn-outline-info"></p>
+    </fieldset>
+</form>
+</div>
+{% endblock content %}

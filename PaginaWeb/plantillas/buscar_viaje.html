@@ -5,7 +5,6 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Buscá tu viaje</legend>
-                <form action='/contacto/' method='POST'>{% csrf_token %}
                     <p>Ciudad origen: <input type='text' name='ciudad_origen' maxlength="100"></p>
                     <p>Ciudad destino: <input type='text' name='ciudad_destino' maxlength="40"></p>
                     <p>Fecha de salida: <input type='date' name='fecha_salida'></p>

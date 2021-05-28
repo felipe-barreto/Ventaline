@@ -40,5 +40,3 @@ class AgregarComentarioForm(forms.ModelForm):
         widgets = {
             'contenido': forms.Textarea(attrs={'class': 'form-control'})
         }
-        
-        
