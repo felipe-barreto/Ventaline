@@ -53,6 +53,9 @@ def perfil(request):
     se_ingreso_apellido = False
     se_eligio_cambiar_el_apellido = False
     cambiar_apellido = False
+    se_ingreso_contraseña = False
+    se_eligio_cambiar_la_contraseña = False
+    cambiar_contraseña = False
     se_ingreso_dni = False
     se_eligio_cambiar_el_dni = False
     cambiar_dni = False
@@ -76,6 +79,14 @@ def perfil(request):
             if nuevo_apellido != "": # EL ÚNICO CONTROL QUE PUSE ES QUE NO PONGA NADA EN EL FORMULARIO. DESPUÉS SE PODRÍAN PONER MÁS CONTROLES
                 se_ingreso_apellido = True
                 cambiar_apellido = True
+        except:
+            pass
+        try:
+            nueva_contraseña = request.POST["contraseña_ingresada"]
+            se_eligio_cambiar_la_contraseña = True
+            if nueva_contraseña != "": # EL ÚNICO CONTROL QUE PUSE ES QUE NO PONGA NADA EN EL FORMULARIO. DESPUÉS SE PODRÍAN PONER MÁS CONTROLES
+                se_ingreso_contraseña = True
+                cambiar_contraseña = True
         except:
             pass
         try:
@@ -122,6 +133,12 @@ def perfil(request):
         usuario_modificado.save()
         cliente.usuario = usuario_modificado
 
+    if cambiar_contraseña:
+        usuario_modificado = CustomUser.objects.get(id = request.user.id)
+        usuario_modificado.set_password(nueva_contraseña)
+        usuario_modificado.save()
+        cliente.usuario = usuario_modificado
+
     if cambiar_dni:
         cliente_modificado = c.objects.get(id = cliente.id)
         cliente_modificado.dni = nuevo_dni
@@ -143,6 +160,11 @@ def perfil(request):
         error = "No se ingresó apellido"
         contexto = {"error":error}
         return render(request,"perfil_apellido.html",contexto)
+
+    if se_eligio_cambiar_la_contraseña and not se_ingreso_contraseña:
+        error = "No se ingresó contraseña"
+        contexto = {"error":error}
+        return render(request,"perfil_contraseña.html",contexto)
     
     if se_eligio_cambiar_el_dni and not se_ingreso_dni:
         error = "No se ingresó dni"
@@ -174,6 +196,10 @@ def perfil_nombre(request,error=None):
 def perfil_apellido(request,error=None):
     contexto = {"error":error}
     return render(request,"perfil_apellido.html",contexto)
+
+def perfil_contraseña(request,error=None):
+    contexto = {"error":error}
+    return render(request,"perfil_contraseña.html",contexto)
 
 def perfil_dni(request,error=None):
     contexto = {"error":error}
