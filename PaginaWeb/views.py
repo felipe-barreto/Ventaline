@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
 from Tablas.models import Cliente as c, Compra_Producto
 from Tablas.models import Comentario as comentarios
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from Tablas.models import CustomUser
 from django.urls import reverse_lazy
 from datetime import datetime, date, timedelta
@@ -24,6 +24,15 @@ def home(request):
     ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
     context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
     return render(request, 'home.html', context)
+
+def mis_comentarios(request):
+    todos_los_comentarios = comentarios.objects.all()
+    mis_comentarios=[]
+    for c in todos_los_comentarios:
+        if c.autor == request.user.cliente:
+            mis_comentarios.append(c)
+    context =  {'comentarios': mis_comentarios}
+    return render(request, 'mis_comentarios.html', context)
 
 def registrar(request):
     if request.method == 'POST':
@@ -226,6 +235,10 @@ class ModificarComentarioView(UpdateView):
     template_name = 'modificar_comentario.html'
     fields = ('contenido',)
 
+class EliminarComentarioView(DeleteView):
+    model = comentarios
+    template_name = 'eliminar_comentario.html'
+    success_url = reverse_lazy('home')
 
 def buscar_viaje(request):
     lista_viajes = list(sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora))

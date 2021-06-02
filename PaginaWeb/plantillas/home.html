@@ -29,6 +29,7 @@
                         <strong>{{c.contenido}} </strong> 
                         {% if c.autor == user.cliente %}
                             <a href="{% url 'modificar_comentario' c.pk %}">(Editar)</a>
+                            <a href="{% url 'eliminar_comentario' c.pk %}">(Eliminar)</a>
                         {% endif %} 
                     <hr> Usuario: {{c.autor.usuario.first_name}} </li>
                 {% endfor %}

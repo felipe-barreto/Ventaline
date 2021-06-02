@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <form method='POST'>
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">¿Estás seguro de eliminar tu comentario?</legend>
+                <H3> Comentario: "{{comentario.contenido}}"</H3>
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Borrar</button>
+        </div>
+        </form>
+    </div>
+{% endblock content %} 
