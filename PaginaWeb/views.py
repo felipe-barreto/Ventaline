@@ -56,7 +56,7 @@ def registrar(request):
     context = {'form': form, 'cliente_form': cliente_form}
     return render(request, 'registrar.html', context)
 
-def perfil_editar(request):
+def perfil_viejo(request):
     se_ingreso_nombre = False
     se_eligio_cambiar_el_nombre = False
     cambiar_nombre = False
@@ -207,6 +207,45 @@ def perfil(request):
             cliente = cl
 
     contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}
+    return render(request,"perfil.html",contexto)
+
+def perfil_editar(request):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+
+    nuevo_nombre = request.POST["nombre_ingresado"]
+    nuevo_apellido = request.POST["apellido_ingresado"]
+    nuevo_dni = request.POST["dni_ingresado"]
+    nueva_fecha_de_nacimiento = request.POST["fecha_de_nacimiento_ingresada"]
+
+    usuario_modificado = CustomUser.objects.get(id = request.user.id)
+    usuario_modificado.first_name = nuevo_nombre
+    usuario_modificado.last_name = nuevo_apellido
+    usuario_modificado.save()
+
+    cliente_modificado = c.objects.get(id = cliente.id)
+    cliente_modificado.usuario = usuario_modificado
+
+    ya_existe_el_dni = False
+    for cl in clientes:
+        if cl.usuario.id != request.user.id and cl.dni == nuevo_dni:
+            ya_existe_el_dni = True
+    if not ya_existe_el_dni:
+        cliente_modificado.dni = nuevo_dni
+
+    es_menor_de_edad = False
+    nueva_fecha_de_nacimiento = parse_date(nueva_fecha_de_nacimiento)
+    if (date.today() - timedelta(days=(18*365))) < nueva_fecha_de_nacimiento:
+        es_menor_de_edad = True
+    else:
+        cliente_modificado.fecha_nacimiento = nueva_fecha_de_nacimiento
+
+    cliente_modificado.save()
+
+    contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d')}
     return render(request,"perfil.html",contexto)
 
 def perfil_nombre(request,error=None):
