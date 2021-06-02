@@ -6,40 +6,59 @@
         <body>
             {% if cliente %}
                 <div>
-                    <h3>Nombre: {{ cliente.usuario.first_name }}</h3>
-                    <p class="mt-3">Si desea cambiar su nombre haz clic <a href="{% url 'perfil_nombre' %}">aquí</a>.</p>
+                    <h4>Nombre:</h4>
+                    <p><input class="form-control mb-2" value={{cliente.usuario.first_name}} name="nombre_ingresado" style="font-size:20px"></p>
                 </div>
                 <div>
-                    <h3>Apellido: {{ cliente.usuario.last_name }}</h3>
-                    <p class="mt-3">Si desea cambiar su apellido haz clic <a href="{% url 'perfil_apellido' %}">aquí</a>.</p>
+                    <h4>Apellido:</h4>
+                    <p><input class="form-control mb-2" value={{cliente.usuario.last_name}} name="apellido_ingresado" style="font-size:20px"></p>
                 </div>
                 <div>
-                    <h3>Email: {{ cliente.usuario.email }}</h3>
+                    <h4>Email:</h4>
+                    <p><input class="form-control mb-2" value={{cliente.usuario.email}} name="email_ingresado" style="font-size:20px" readonly=True></p>
                 </div>
                 <div>
-                    <h3>Contraseña: **********</h3>
+                    <h4>Contraseña:</h4>
+                    <p><input class="form-control mb-2" value={{cliente.cantidad_de_caracteres_de_la_contraseña}} style="font-size:20px" readonly=True></p>
                     <p class="mt-3">Si desea cambiar su contraseña haz clic <a href="{% url 'perfil_contraseña' %}">aquí</a>.</p>
                 </div>
                 <div>
-                    <h3>Dni: {{ cliente.dni }}</h3>
-                    <p class="mt-3">Si desea cambiar su dni haz clic <a href="{% url 'perfil_dni' %}">aquí</a>.</p>
+                    <h4>Dni:</h4>
+                    <p><input class="form-control mb-2" value={{cliente.dni}} name="dni_ingresado" style="font-size:20px"></p>
                 </div>
                 <div>
-                    <h3>Fecha de nacimiento: {{ cliente.fecha_nacimiento }}</h3>
-                    <p class="mt-3">Si desea cambiar su fecha de nacimiento haz clic <a href="{% url 'perfil_fecha_de_nacimiento' %}">aquí</a>.</p>
+                    <h4>Fecha de nacimiento:</h4>
+                    <p><input class="form-control mb-2" type="date" value={{fecha_nacimiento}} name="fecha_de_nacimiento_ingresada" style="font-size:20px"></p>
                 </div>
                 <div>
                     {% if cliente.gold %}
-                        <h3>Tipo de cliente: Gold</h3>
-                        <h3>Código de seguridad de la tarjeta: {{ cliente.tarjeta_cod_seguridad }}</h3>
-                        <h3>Fecha de vencimiento de la tarjeta: {{ cliente.tarjeta_fecha_vencimiento }}</h3>
-                        <h3>Nombre del titular de la tarjeta: {{ cliente.tarjeta_nombre_titular }}</h3>
-                        <h3>Número de la tarjeta: {{ cliente.tarjeta_numero }}</h3>
+                        <h4>Tipo de cliente:</h4>
+                        <p><input class="form-control mb-2" value=Gold style="font-size:20px" readonly=True></p>
+                        <h4>Código de seguridad de la tarjeta:</h4>
+                        <p><input class="form-control mb-2" value={{cliente.tarjeta_cod_seguridad}} style="font-size:20px" readonly=True></p>
+                        <h4>Fecha de vencimiento de la tarjeta:</h4>
+                        <p><input class="form-control mb-2" value={{cliente.tarjeta_fecha_vencimiento}} style="font-size:20px" readonly=True></p>
+                        <h4>Nombre del titular de la tarjeta:</h4>
+                        <p><input class="form-control mb-2" value="{{cliente.tarjeta_nombre_titular}}" style="font-size:20px" readonly=True></p>
+                        <h4>Número de la tarjeta:</h4>
+                        <p><input class="form-control mb-2" value={{cliente.tarjeta_numero}} style="font-size:20px" readonly=True></p>
+                        <p class="mt-3">Si desea ser un cliente común o cambiar algún dato de la tarjeta haz clic <a href="{% url 'perfil_contraseña' %}">aquí</a>.</p>
                     {% endif %}
                     {% if cliente.gold == False %}
-                        <h3>Tipo de cliente: Común</h3>
+                        <h4>Tipo de cliente:</h4>
+                        <p><input class="form-control mb-2" value=Común style="font-size:20px" readonly=True></p>
+                        <p class="mt-3">Si desea ser un cliente gold haz clic <a href="{% url 'perfil_contraseña' %}">aquí</a>.</p>
                     {% endif %}
                 </div>
+                <div>
+                    <form action="{% url 'perfil_nombre' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary btn-block" type="submit">Editar</button>
+                    </form>
+                </div>
+                <p>
+                    &nbsp;
+                </p>
             {% else %}
                 <h1>No hay un cliente con ese dni</h1>
             {% endif %}

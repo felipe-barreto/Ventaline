@@ -42,6 +42,7 @@ def registrar(request):
             user = form.save()
             cliente = cliente_form.save(commit=False)
             cliente.usuario = user
+            cliente.cantidad_de_caracteres_de_la_contraseña = "*"*(len(form.cleaned_data.get('password1')))
             cliente.save()
             
             email = form.cleaned_data.get('email')
@@ -55,7 +56,7 @@ def registrar(request):
     context = {'form': form, 'cliente_form': cliente_form}
     return render(request, 'registrar.html', context)
 
-def perfil(request):
+def perfil_editar(request):
     se_ingreso_nombre = False
     se_eligio_cambiar_el_nombre = False
     cambiar_nombre = False
@@ -195,7 +196,17 @@ def perfil(request):
         contexto = {"error":error}
         return render(request,"perfil_fecha_de_nacimiento.html",contexto)
 
-    contexto = {"cliente":cliente}
+    contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}
+    return render(request,"perfil.html",contexto)
+
+def perfil(request):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+
+    contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}
     return render(request,"perfil.html",contexto)
 
 def perfil_nombre(request,error=None):

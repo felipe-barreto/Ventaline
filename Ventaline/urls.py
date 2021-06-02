@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from PaginaWeb.views import buscar_viaje,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
-                home, mis_comentarios, registrar, perfil, perfil_nombre, perfil_apellido, perfil_contraseña, perfil_dni, perfil_fecha_de_nacimiento,\
-                AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
+    home, mis_comentarios, registrar, perfil, perfil_nombre, perfil_apellido, perfil_contraseña, perfil_dni, perfil_fecha_de_nacimiento,\
+    AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
 from django.contrib.auth import views as auth_views
 
 
