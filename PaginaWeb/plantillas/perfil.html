@@ -26,10 +26,16 @@
                     </div>
                     <div>
                         <h4>Dni:</h4>
+                        {% if error_con_dni == "Ya existe el dni" %}
+                            <p style="color: red;">Ya hay un cliente con ese dni, por favor ingrese otro</p>
+                        {% endif %}
                         <p><input class="form-control mb-2" value={{cliente.dni}} name="dni_ingresado" style="font-size:20px"></p>
                     </div>
                     <div>
                         <h4>Fecha de nacimiento:</h4>
+                        {% if error_con_fecha_de_nacimiento == "Es menor de edad" %}
+                            <p style="color: red;">No puede ser menor de edad, por favor ingrese otra fecha de nacimiento</p>
+                        {% endif %}
                         <p><input class="form-control mb-2" type="date" value={{fecha_nacimiento}} name="fecha_de_nacimiento_ingresada" style="font-size:20px"></p>
                     </div>
                     <div>

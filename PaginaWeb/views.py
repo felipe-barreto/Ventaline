@@ -229,23 +229,24 @@ def perfil_editar(request):
     cliente_modificado = c.objects.get(id = cliente.id)
     cliente_modificado.usuario = usuario_modificado
 
-    ya_existe_el_dni = False
+    error_con_dni = None
     for cl in clientes:
         if cl.usuario.id != request.user.id and cl.dni == nuevo_dni:
-            ya_existe_el_dni = True
-    if not ya_existe_el_dni:
+            error_con_dni = "Ya existe el dni"
+    if error_con_dni != "Ya existe el dni":
         cliente_modificado.dni = nuevo_dni
 
-    es_menor_de_edad = False
+    error_con_fecha_de_nacimiento = None
     nueva_fecha_de_nacimiento = parse_date(nueva_fecha_de_nacimiento)
     if (date.today() - timedelta(days=(18*365))) < nueva_fecha_de_nacimiento:
-        es_menor_de_edad = True
+        error_con_fecha_de_nacimiento = "Es menor de edad"
     else:
         cliente_modificado.fecha_nacimiento = nueva_fecha_de_nacimiento
 
     cliente_modificado.save()
 
-    contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d')}
+    contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d'),
+    "error_con_dni":error_con_dni,"error_con_fecha_de_nacimiento":error_con_fecha_de_nacimiento}
     return render(request,"perfil.html",contexto)
 
 def perfil_nombre(request,error=None):
