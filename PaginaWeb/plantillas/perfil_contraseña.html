@@ -7,14 +7,18 @@
     <div class="container">
         <div class="row mt-3">
             <div class="col-md-9 mx-auto mb-5">
-                <form action="{% url 'perfil' %}" method="POST">
+                <form action="{% url 'perfil_contraseña_editar' %}" method="POST">
                     {% csrf_token %}
                     <h3 class="mb-4">Contraseña</h3>
                     {{form.as_p}}
-                    {% if error == "No se ingresó contraseña" %}
-                        <p style="color: red;">No ha ingresado una contraseña, por favor ingrese una</p>
+                    {% if error == "No ha ingresado la misma contraseña dos veces" %}
+                        <p style="color: red;">No ha ingresado la misma contraseña dos veces</p>
                     {% endif %}
-                    <p><input class="form-control mb-2" placeholder="Ingrese su nueva contraseña" name="contraseña_ingresada"></p>
+                    {% if error == "La contraseña tiene que tener mínimo 8 caracteres" %}
+                        <p style="color: red;">La contraseña tiene que tener mínimo 8 caracteres</p>
+                    {% endif %}
+                    <p><input class="form-control mb-2" type="password" placeholder="Ingrese su nueva contraseña" name="contraseña_ingresada_1"></p>
+                    <p><input class="form-control mb-2" type="password" placeholder="Ingrese su nueva contraseña otra vez" name="contraseña_ingresada_2"></p>
                     <button class="btn btn-primary btn-block" type="submit">Editar</button>
                 </form>
             </div>

@@ -50,12 +50,12 @@
                             <p><input class="form-control mb-2" value="{{cliente.tarjeta_nombre_titular}}" style="font-size:20px" readonly=True></p>
                             <h4>Número de la tarjeta:</h4>
                             <p><input class="form-control mb-2" value={{cliente.tarjeta_numero}} style="font-size:20px" readonly=True></p>
-                            <p class="mt-3">Si desea ser un cliente común o cambiar algún dato de la tarjeta haz clic <a href="{% url 'perfil_contraseña' %}">aquí</a>.</p>
+                            <p class="mt-3">Si desea ser un cliente común o cambiar algún dato de la tarjeta haz clic <a href="{% url 'perfil_tipo_gold' %}">aquí</a>.</p>
                         {% endif %}
                         {% if cliente.gold == False %}
                             <h4>Tipo de cliente:</h4>
                             <p><input class="form-control mb-2" value=Común style="font-size:20px" readonly=True></p>
-                            <p class="mt-3">Si desea ser un cliente gold haz clic <a href="{% url 'perfil_contraseña' %}">aquí</a>.</p>
+                            <p class="mt-3">Si desea ser un cliente gold haz clic <a href="{% url 'perfil_tipo_comun' %}">aquí</a>.</p>
                         {% endif %}
                     </div>
                     <button class="btn btn-primary btn-block" type="submit">Editar</button>

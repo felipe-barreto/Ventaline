@@ -249,6 +249,61 @@ def perfil_editar(request):
     "error_con_dni":error_con_dni,"error_con_fecha_de_nacimiento":error_con_fecha_de_nacimiento}
     return render(request,"perfil.html",contexto)
 
+def perfil_contraseña(request,error=None):
+    contexto = {"error":error}
+    return render(request,"perfil_contraseña.html",contexto)
+
+def perfil_contraseña_editar(request):
+    error = None
+    contraseña1 = request.POST["contraseña_ingresada_1"]
+    contraseña2 = request.POST["contraseña_ingresada_2"]
+    if contraseña1 == contraseña2:
+        if len(contraseña1) >= 8:
+            cliente = "Inicializo porque sino no anda"
+            clientes = c.objects.all()
+            for cl in clientes:
+                if cl.usuario.id == request.user.id:
+                    cliente = cl
+
+            usuario_modificado = CustomUser.objects.get(id = request.user.id)
+            usuario_modificado.set_password(contraseña1)
+            usuario_modificado.save()           
+            cliente.usuario = usuario_modificado
+            contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}
+            return render(request,"perfil.html",contexto)
+        else:
+            error = "La contraseña tiene que tener mínimo 8 caracteres"
+    else:
+        error = "No ha ingresado la misma contraseña dos veces"
+    contexto = {"error":error}
+    return render(request,"perfil_contraseña.html",contexto)
+
+def perfil_tipo_gold(request,error=None):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+
+    contexto = {"cliente":cliente,"error":error,"fecha_de_vencimiento":cliente.tarjeta_fecha_vencimiento.strftime('%Y-%m-%d')}
+    return render(request,"perfil_tipo_gold.html",contexto)
+
+def perfil_tipo_gold_editar(request,error=None):
+    nuevo_codigo_de_seguridad = request.POST["codigo_de_seguridad"]
+    nueva_fecha_de_vencimiento = request.POST["fecha_de_vencimiento"]
+    nuevo_nombre_titular = request.POST["nombre_titular"]
+    nuevo_numero = request.POST["numero"]
+
+def perfil_tipo_comun(request,error=None):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+
+    contexto = {"cliente":cliente,"error":error}
+    return render(request,"perfil_tipo_comun.html",contexto)
+
 def perfil_nombre(request,error=None):
     contexto = {"error":error}
     return render(request,"perfil_nombre.html",contexto)
@@ -256,10 +311,6 @@ def perfil_nombre(request,error=None):
 def perfil_apellido(request,error=None):
     contexto = {"error":error}
     return render(request,"perfil_apellido.html",contexto)
-
-def perfil_contraseña(request,error=None):
-    contexto = {"error":error}
-    return render(request,"perfil_contraseña.html",contexto)
 
 def perfil_dni(request,error=None):
     contexto = {"error":error}
