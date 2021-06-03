@@ -384,10 +384,10 @@ def compra_viaje_productos(request, viaje, producto):
         elif request.POST.get('buscar'):
             context['productos'] = list(filter(lambda x: x.contiene(request.POST['nombre_producto']), list(Producto.objects.all())))
         elif request.POST.get('siguiente'):
-            if request.user.cliente.gold:
-                return redirect('compra_viaje_confirmar', viaje)
-            else:
-                return redirect('compra_viaje_tarjeta', viaje)
+            #if request.user.cliente.gold:
+             #   return redirect('compra_viaje_confirmar', viaje)
+            #else:
+            return redirect('compra_viaje_tarjeta', viaje)
         else:
             return redirect('home')
     elif request.method != 'POST' and producto==0:
@@ -440,7 +440,35 @@ def compra_viaje_tarjeta(request, viaje):
                 help_text = 'El código de tarjeta debe ser de 3 dígitos'
             else:
                 return redirect('compra_viaje_confirmar', viaje)
+        elif request.POST.get('tarjeta_gold'):
+            return redirect('compra_viaje_confirmar', viaje)
         else:
             return redirect('home')
-    context = {'viaje_id': viaje, 'fecha_hoy': datetime.today().strftime('%Y-%m-%d'), 'help_text': help_text}
+    context = {'viaje_id': viaje, 'fecha_hoy': datetime.today().strftime('%Y-%m-%d'), 'help_text': help_text, 'cliente': request.user.cliente}
     return render(request, 'compra_viaje_tarjeta.html', context)
+
+def mis_compras(request):
+    context = {'compras': reversed(request.user.cliente.compras.all())}
+    return render(request, 'mis_compras.html', context)
+
+def compra_detalle(request,compra):
+    c = Compra.objects.get(id=compra)
+    prods = c.compra_producto.all()
+    cancelar = c.viaje.fecha_hora.replace(tzinfo=None) > datetime.now()
+    context = {'compra': c, 'productos': prods, 'cancelar': cancelar}
+    return render(request, 'compra_detalle.html', context)
+
+def compra_cancelar(request,compra):
+    c = Compra.objects.get(id=compra)
+    if request.method == 'POST':
+        if request.POST.get('si'):
+            c.delete()
+        return redirect('mis_compras')
+    horas = divmod(((c.viaje.fecha_hora.replace(tzinfo=None) - datetime.now()).total_seconds()),3600)[0]
+    if horas>48:
+        devolucion = '100%'
+    else:
+        devolucion = '50%'
+    context = {'devolucion': devolucion}
+    return render(request, 'compra_cancelar.html', context)
+    

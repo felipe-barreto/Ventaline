@@ -1,0 +1,7 @@
+<li class="list-group-item list-group-item-light" style="font-size:16px">
+    <p><strong>Origen: </strong> {{compra.viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{compra.viaje.ruta.ciudad_destino}}
+    </p>
+    <p><strong>Fecha y hora de salida: </strong> {{compra.viaje.fecha_hora}} | <strong>Asientos: </strong> {{compra.asientos}}
+    </p>
+    <p style='text-align: right;'><a href="{% url 'compra_detalle' compra.pk %}" >Ver compra</a></p>
+</li>

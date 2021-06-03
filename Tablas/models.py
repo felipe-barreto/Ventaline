@@ -259,7 +259,7 @@ class Comentario(sd.SoftDeletionModel):
         return reverse('home')
 
 class Compra(models.Model):
-    viaje = ForeignKey(Viaje, related_name="compras", on_delete=models.DO_NOTHING,null=True,blank=True)
+    viaje = ForeignKey(Viaje, related_name="compras", on_delete=models.PROTECT,null=True,blank=True)
     precio = IntegerField(null=True,blank=True)
     cliente = ForeignKey(Cliente, related_name="compras", on_delete=models.DO_NOTHING, null=True,blank=True)
     asientos = IntegerField(null=True,blank=True)
@@ -268,6 +268,6 @@ class Compra(models.Model):
         return 'Viaje: ( %s ) - Cliente: ( %s ) - Precio: ( %s )'%(self.viaje,self.cliente,self.precio)
     
 class Compra_Producto(models.Model):
-    compra = ForeignKey(Compra, related_name="compra_producto", on_delete=models.DO_NOTHING, null=True, blank=True)
+    compra = ForeignKey(Compra, related_name="compra_producto", on_delete=models.CASCADE, null=True, blank=True)
     producto = ForeignKey(Producto, related_name="compra_producto", on_delete=models.DO_NOTHING, null=True, blank=True)
     cantidad = IntegerField(null=True,blank=True)

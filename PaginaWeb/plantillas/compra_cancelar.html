@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h5>Cancelar compra</h5>
+<div class="list-group-item list-group-item-light" style="font-size:16px">
+    <p>¿Está seguro que desea cancelar la compra?
+    Se le devolverá un <strong>{{devolucion}}</strong> del precio total</p>
+    <form method='POST'>{% csrf_token %}
+        <fieldset class="form-group">
+        <p><input type='submit' name="no" value='No, volver atrás' class="btn btn-outline-info">
+        <input type='submit' name="si" value='Si, cancelar compra' class="btn btn-outline-info"></p>
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}

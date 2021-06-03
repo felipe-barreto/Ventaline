@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Detalle de la compra:</h2>
+    <div class="list-group-item list-group-item-light" style="font-size:16px">
+    <p><strong>Origen: </strong> {{compra.viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{compra.viaje.ruta.ciudad_destino}}
+    </p>
+    <p><strong>Fecha y hora de salida: </strong> {{compra.viaje.fecha_hora}} | <strong>Asientos: </strong> {{compra.asientos}}
+    </p>
+    <p>
+        <strong>Productos:</strong>
+        <ul>
+            {% for p in productos %}
+            <li>
+                <p><strong>Nombre:</strong> {{p.producto.nombre}} |<strong> Cantidad: </strong> {{p.cantidad}}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p><strong>Precio total: </strong> ${{compra.precio}}</p>
+    <p style='text-align: right;'>
+        <a href="{% url 'mis_compras' %}" >Volver atrás</a>
+        {% if cancelar %}
+        |
+        <a href="{% url 'compra_cancelar' compra.pk %}" >Cancelar compra</a>
+        {% endif %}
+    </p>
+    </div>
+{% endblock content %}

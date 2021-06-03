@@ -23,7 +23,11 @@
                  /></p>
                 <p>Fecha de vencimiento: <input id="datefield" type='date' min={{fecha_hoy}} required></input></p>
                 <p><input type="submit" name="siguiente" value="Siguiente" class="btn btn-outline-info">
-                    <input type="submit" name="cancelar" value="Cancelar" class="btn btn-outline-info"></p>
+                    <input type="submit" name="cancelar" value="Cancelar" class="btn btn-outline-info" formnovalidate>
+                    {% if cliente.gold %}
+                        <input type="submit" name="tarjeta_gold" value="Utilizar tarjeta registrada" class="btn btn-outline-info" formnovalidate>
+                    {% endif %}
+                </p>
         </fieldset>
         </form>
 {% endblock content %}

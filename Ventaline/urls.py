@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import buscar_viaje,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
-    home, mis_comentarios, registrar, perfil, perfil_editar, perfil_nombre, perfil_apellido, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar, perfil_tipo_comun, perfil_dni, perfil_fecha_de_nacimiento,\
+from PaginaWeb.views import buscar_viaje, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
+    home, mis_comentarios, mis_compras, registrar, perfil, perfil_editar, perfil_nombre, perfil_apellido, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar, perfil_tipo_comun, perfil_dni, perfil_fecha_de_nacimiento,\
     AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
 from django.contrib.auth import views as auth_views
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', home, name='home'),
     path('mis_comentarios/', mis_comentarios, name='mis_comentarios'),
+    path('mis_compras/', mis_compras, name='mis_compras'),
     path('registrar/', registrar, name='registrar'),
     path('login/', auth_views.LoginView.as_view(template_name = 'login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name = 'logout.html'), name='logout'),
@@ -48,4 +49,6 @@ urlpatterns = [
     path('compra_viaje_productos/<int:viaje>/<int:producto>', compra_viaje_productos, name='compra_viaje_productos'),
     path('compra_viaje_confirmar/<int:viaje>', compra_viaje_confirmar, name='compra_viaje_confirmar'),
     path('compra_viaje_tarjeta/<int:viaje>', compra_viaje_tarjeta, name='compra_viaje_tarjeta'),
+    path('compra_detalle/<int:compra>',compra_detalle, name='compra_detalle'),
+    path('compra_cancelar/<int:compra>',compra_cancelar, name='compra_cancelar'),
 ]
