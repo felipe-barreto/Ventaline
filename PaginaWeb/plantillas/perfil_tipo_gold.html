@@ -12,10 +12,16 @@
                     <h3 class="mb-4">Contraseña</h3>
                     {{form.as_p}}
                     <h4>Tipo de cliente:</h4>
-                    <p><input class="form-control mb-2" value=Gold style="font-size:20px" readonly=True></p>
+                    <p>
+                        <input class="form-control mb-2" value=Gold style="font-size:20px" readonly=True>
+                        <a href="{% url 'perfil_tipo_pasar_a_comun' %}">Dejar de ser gold</a>
+                    </p>
                     <h4>Código de seguridad de la tarjeta:</h4>
                     <p><input class="form-control mb-2" value={{cliente.tarjeta_cod_seguridad}} maxlength="3" minlength="3" name="codigo_de_seguridad" style="font-size:20px"></p>
                     <h4>Fecha de vencimiento de la tarjeta:</h4>
+                    {% if error == "Tarjeta vencida" %}
+                        <p style="color: red;">No puede ingresar la fecha de vencimiento de una tarjeta vencida</p>
+                    {% endif %}
                     <p><input class="form-control mb-2" type="date" value={{fecha_de_vencimiento}} name="fecha_de_vencimiento" style="font-size:20px"></p>
                     <h4>Nombre del titular de la tarjeta:</h4>
                     <p><input class="form-control mb-2" value="{{cliente.tarjeta_nombre_titular}}" name="nombre_titular" style="font-size:20px"></p>

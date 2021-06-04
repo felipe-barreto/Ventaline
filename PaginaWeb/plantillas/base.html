@@ -30,17 +30,17 @@
                     <a class="nav-item nav-link" href="/home">Home</a>
                     {% if user.cliente %}
                         <a class="nav-item nav-link" href="/buscar_viaje">Buscar viaje</a>
-                        <a class="nav-item nav-link" href="/mis_compras">Mis Compras</a>
-                        <a class="nav-item nav-link" href="/mis_comentarios">Mis Comentarios</a>
+                        <a class="nav-item nav-link" href="/mis_compras">Mis compras</a>
+                        <a class="nav-item nav-link" href="/mis_comentarios">Mis comentarios</a>
                     {% endif %}
                 </div>
                 <!-- Navbar Right Side -->
                     <div class="navbar-nav">
                     {% if user.is_authenticated %}
                         <a class="nav-item nav-link" href="{% url 'perfil' %}">Mi perfil</a>
-                        <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar Sesion</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar sesion</a>
                     {% else %}
-                        <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                         <a class="nav-item nav-link" href="{% url 'registrar' %}">Registrarse</a>
                     {% endif %}
                     </div>
