@@ -258,7 +258,7 @@ class Comentario(sd.SoftDeletionModel):
     def get_absolute_url (self):
         return reverse('home')
 
-class Compra(models.Model):
+class Compra(sd.SoftDeletionModel):
     viaje = ForeignKey(Viaje, related_name="compras", on_delete=models.PROTECT,null=True,blank=True)
     precio = IntegerField(null=True,blank=True)
     cliente = ForeignKey(Cliente, related_name="compras", on_delete=models.DO_NOTHING, null=True,blank=True)
@@ -267,7 +267,23 @@ class Compra(models.Model):
     def __str__(self):
         return 'Viaje: ( %s ) - Cliente: ( %s ) - Precio: ( %s )'%(self.viaje,self.cliente,self.precio)
     
-class Compra_Producto(models.Model):
+    def delete(self):
+        nuevo_origen = Lugar(provincia=self.viaje.ruta.ciudad_origen.provincia,nombre_ciudad=self.viaje.ruta.ciudad_origen.nombre_ciudad,observaciones=self.viaje.ruta.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_origen.save()
+        nuevo_destino = Lugar(provincia=self.viaje.ruta.ciudad_destino.provincia,nombre_ciudad=self.viaje.ruta.ciudad_destino.nombre_ciudad,observaciones=self.viaje.ruta.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
+        nuevo_destino.save()
+        nuevo_chofer = Chofer(nombre=self.viaje.ruta.combi.chofer.nombre,apellido=self.viaje.ruta.combi.chofer.apellido,dni=self.viaje.ruta.combi.chofer.dni,email=self.viaje.ruta.combi.chofer.email,contraseña=self.viaje.ruta.combi.chofer.contraseña,telefono=self.viaje.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        nuevo_chofer.save()
+        nueva_combi = Combi(modelo=self.viaje.ruta.combi.modelo,patente=self.viaje.ruta.combi.patente,cant_asientos=self.viaje.ruta.combi.cant_asientos,tipo=self.viaje.ruta.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
+        nueva_combi.save()
+        nueva_ruta = Ruta(ciudad_origen=nuevo_origen,ciudad_destino=nuevo_destino,combi=nueva_combi,datos_adicionales=self.viaje.ruta.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
+        nueva_ruta.save()
+        nuevo_viaje = Viaje(ruta=nueva_ruta,fecha_hora=self.viaje.fecha_hora,precio=self.viaje.precio,datos_adicionales=self.viaje.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
+        nuevo_viaje.save()
+        self.viaje = nuevo_viaje
+        return super(Compra,self).delete()
+    
+class Compra_Producto(sd.SoftDeletionModel):
     compra = ForeignKey(Compra, related_name="compra_producto", on_delete=models.CASCADE, null=True, blank=True)
     producto = ForeignKey(Producto, related_name="compra_producto", on_delete=models.DO_NOTHING, null=True, blank=True)
     cantidad = IntegerField(null=True,blank=True)

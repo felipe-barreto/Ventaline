@@ -462,6 +462,8 @@ def compra_cancelar(request,compra):
     c = Compra.objects.get(id=compra)
     if request.method == 'POST':
         if request.POST.get('si'):
+            for p in c.compra_producto.all():
+                p.delete()
             c.delete()
         return redirect('mis_compras')
     horas = divmod(((c.viaje.fecha_hora.replace(tzinfo=None) - datetime.now()).total_seconds()),3600)[0]
