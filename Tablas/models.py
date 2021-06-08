@@ -263,6 +263,7 @@ class Compra(sd.SoftDeletionModel):
     precio = IntegerField(null=True,blank=True)
     cliente = ForeignKey(Cliente, related_name="compras", on_delete=models.DO_NOTHING, null=True,blank=True)
     asientos = IntegerField(null=True,blank=True)
+    estado = models.TextField(max_length=30,null=True,blank=True)
 
     def __str__(self):
         return 'Viaje: ( %s ) - Cliente: ( %s ) - Precio: ( %s )'%(self.viaje,self.cliente,self.precio)
@@ -281,6 +282,7 @@ class Compra(sd.SoftDeletionModel):
         nuevo_viaje = Viaje(ruta=nueva_ruta,fecha_hora=self.viaje.fecha_hora,precio=self.viaje.precio,datos_adicionales=self.viaje.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
         nuevo_viaje.save()
         self.viaje = nuevo_viaje
+        self.estado = 'Cancelada'
         return super(Compra,self).delete()
     
 class Compra_Producto(sd.SoftDeletionModel):

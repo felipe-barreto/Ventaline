@@ -326,7 +326,7 @@ def compra_viaje_confirmar(request, viaje):
         precio_total += int((p.precio*int(prod[1])))
     if request.user.cliente.gold:
         precio_total = (precio_total*0.9)
-    compra = Compra(viaje=v,precio=precio_total,cliente=request.user.cliente,asientos=request.session['compra']['asientos'])
+    compra = Compra(viaje=v,precio=precio_total,cliente=request.user.cliente,asientos=request.session['compra']['asientos'],estado='Pendiente')
     context = {'compra': compra, 'prods_sel': request.session['prods_sel']}
     if request.method == 'POST':
         if request.POST.get('confirmar'):
@@ -334,7 +334,7 @@ def compra_viaje_confirmar(request, viaje):
             for prod in request.session['prods_sel']:
                 compra_prod = Compra_Producto(compra=compra, producto=(Producto.objects.get(nombre=prod[0])), cantidad= int(prod[1]))
                 compra_prod.save()
-            return redirect('home')
+            return redirect('mis_compras')
         else:
             return redirect('home')
     return render(request, 'compra_viaje_confirmar.html', context)
@@ -357,13 +357,22 @@ def compra_viaje_tarjeta(request, viaje):
     return render(request, 'compra_viaje_tarjeta.html', context)
 
 def mis_compras(request):
-    context = {'compras': reversed(request.user.cliente.compras.all())}
+    compras = []
+    for c in Compra.all_objects.all():
+        if c.cliente == request.user.cliente:
+            compras.append(c)
+    #context = {'compras': reversed(request.user.cliente.compras.all())}
+    context = {'compras': reversed(compras)}
     return render(request, 'mis_compras.html', context)
 
 def compra_detalle(request,compra):
-    c = Compra.objects.get(id=compra)
-    prods = c.compra_producto.all()
-    cancelar = c.viaje.fecha_hora.replace(tzinfo=None) > datetime.now()
+    c = Compra.all_objects.get(id=compra)
+    prods = []
+    for cp in Compra_Producto.all_objects.all():
+        if c == cp.compra:
+            prods.append(cp)
+    #prods = c.compra_producto.all()
+    cancelar = (c.viaje.fecha_hora.replace(tzinfo=None) > datetime.now())and(c.estado == 'Pendiente')
     context = {'compra': c, 'productos': prods, 'cancelar': cancelar}
     return render(request, 'compra_detalle.html', context)
 
