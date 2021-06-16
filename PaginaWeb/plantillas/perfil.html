@@ -3,6 +3,9 @@
 <html>
     <head>
         <h1><strong>Mi perfil</strong></h1>
+        {% if editado %}
+            <p style="color: green;">Se guardó la edición del perfil</p>
+        {% endif %}
         <body>
             {% if cliente %}
                 <form action="{% url 'perfil_editar' %}" method="POST">

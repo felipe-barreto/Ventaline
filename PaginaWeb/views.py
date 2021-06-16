@@ -67,6 +67,8 @@ def perfil(request):
     return render(request,"perfil.html",contexto)
 
 def perfil_editar(request):
+    editado_correctamente = True
+
     cliente = "Inicializo porque sino no anda"
     clientes = c.objects.all()
     for cl in clientes:
@@ -90,6 +92,7 @@ def perfil_editar(request):
     for cl in clientes:
         if cl.usuario.id != request.user.id and cl.dni == nuevo_dni:
             error_con_dni = "Ya existe el dni"
+            editado_correctamente = False
     if error_con_dni != "Ya existe el dni":
         cliente_modificado.dni = nuevo_dni
 
@@ -97,13 +100,14 @@ def perfil_editar(request):
     nueva_fecha_de_nacimiento = parse_date(nueva_fecha_de_nacimiento)
     if (date.today() - timedelta(days=(18*365))) < nueva_fecha_de_nacimiento:
         error_con_fecha_de_nacimiento = "Es menor de edad"
+        editado_correctamente = False
     else:
         cliente_modificado.fecha_nacimiento = nueva_fecha_de_nacimiento
 
     cliente_modificado.save()
 
     contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d'),
-    "error_con_dni":error_con_dni,"error_con_fecha_de_nacimiento":error_con_fecha_de_nacimiento}
+    "error_con_dni":error_con_dni,"error_con_fecha_de_nacimiento":error_con_fecha_de_nacimiento,"editado":editado_correctamente}
     return render(request,"perfil.html",contexto)
 
 def perfil_contraseña(request,error=None):
