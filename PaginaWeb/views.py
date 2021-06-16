@@ -227,7 +227,7 @@ def perfil_tipo_comun_editar(request):
         cliente.tarjeta_cod_seguridad = nuevo_codigo_de_seguridad
         cliente.tarjeta_nombre_titular = nuevo_nombre_titular
         cliente.tarjeta_numero = nuevo_numero
-        contexto = {"cliente":cliente,"error":"Tarjeta vencida","fecha_de_vencimiento":cliente.tarjeta_fecha_vencimiento.strftime('%Y-%m-%d'),"con_valores_por_defecto":True}
+        contexto = {"cliente":cliente,"error":"Tarjeta vencida","con_valores_por_defecto":True}
         return render(request,"perfil_tipo_comun.html",contexto)
 
     contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}

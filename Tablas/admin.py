@@ -1,5 +1,6 @@
 from django.contrib import admin
 import Tablas.models as tablas
+from django.contrib.auth.models import Group
 
 # Register your models here.
 
@@ -93,6 +94,25 @@ class ComprasAdmin(admin.ModelAdmin):
     def has_delete_permission(self,request,obj=None):
         return False
 
+class ComentariosAdmin(admin.ModelAdmin):
+    list_display=("autor","contenido","fecha_de_creacion")
+    fields = ("autor","contenido","fecha_de_creacion")
+
+    def get_readonly_fields(self, request,obj):
+        if obj:
+            return ["autor","contenido","fecha_de_creacion"]
+        else:
+            return ['is_deleted','deleted_at']
+    
+    def has_add_permission(self,request):
+        return False
+
+    def has_change_permission(self,request,obj=None):
+        return False
+    
+    def has_delete_permission(self,request,obj=None):
+        return False
+
 admin.site.register(tablas.Cliente, ClientesAdmin)
 admin.site.register(tablas.Chofer, ChoferesAdmin)
 admin.site.register(tablas.Combi, CombisAdmin)
@@ -100,5 +120,6 @@ admin.site.register(tablas.Producto, ProductosAdmin)
 admin.site.register(tablas.Lugar, LugaresAdmin)
 admin.site.register(tablas.Ruta, RutasAdmin)
 admin.site.register(tablas.Viaje, ViajesAdmin)
-admin.site.register(tablas.Comentario)
+admin.site.register(tablas.Comentario, ComentariosAdmin)
 admin.site.register(tablas.Compra, ComprasAdmin)
+admin.site.unregister(Group)

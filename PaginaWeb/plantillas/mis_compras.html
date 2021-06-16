@@ -2,13 +2,11 @@
 
 {% block content %}
 <h2>Mis compras:</h2>
-{% if not compras %}
-Todavía no has realizado ninguna compra
-{% else %}
     <ul class="list-group">
     {% for compra in compras %}
         {% include "compra.html" %}
+    {% empty %}
+        Todavía no has realizado ninguna compra.
     {% endfor %}
     </ul>
-{% endif %}
 {% endblock content %}

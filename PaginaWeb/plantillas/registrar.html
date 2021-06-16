@@ -5,6 +5,7 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Registrate en Ventaline</legend>
+                <p style="color: red;"><strong>Ingresar los datos de la tarjeta solo si elige ser gold.</strong></p>
             {{ form.as_p }}
             {{ cliente_form.as_p}}
         </fieldset>

@@ -2,11 +2,13 @@
 {% block content %}
 <div class="col-md-12">
 <div class="content-section">
-    <p class='text' style="font-size:20px">Mis comentarios
+    <p class='text' style="font-size:20px">Mis comentarios:
         {% if not comentarios %}
-            No hay comentarios
+            <p>No hay comentarios.</p>
             {% if user.cliente %} 
-                <a href="{% url 'agregar_comentario' %}">Agregar un comentario</a>
+                <p>
+                <a href="{% url 'agregar_comentario' %}">Agregar un comentario.</a>
+            </p>
             {% endif %}
         {% else %}
             <ul class="list-group">

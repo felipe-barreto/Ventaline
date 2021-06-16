@@ -22,6 +22,9 @@
     {% endif %}
 </div>
 <div class="content-section">
+    {% if user.cliente.gold %}
+        <h4><strong>Descuento: 10%</strong></h4>
+    {% endif %}
     <h4><strong>Precio total: </strong>${{compra.precio}}</h4>
     <form method='POST' action="{% url 'compra_viaje_confirmar' compra.viaje.pk %}"> {% csrf_token %}
         <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">
