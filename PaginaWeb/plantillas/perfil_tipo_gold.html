@@ -14,7 +14,7 @@
                     <h4>Tipo de cliente:</h4>
                     <p>
                         <input class="form-control mb-2" value=Gold style="font-size:20px" readonly=True>
-                        <a href="{% url 'perfil_tipo_pasar_a_comun' %}">Dejar de ser gold</a>
+                        <a href="{% url 'perfil_tipo_pasar_a_comun_confirmar' %}">Dejar de ser gold</a>
                     </p>
                     <h4>Código de seguridad de la tarjeta:</h4>
                     <p><input class="form-control mb-2" value={{cliente.tarjeta_cod_seguridad}} maxlength="3" minlength="3" name="codigo_de_seguridad" style="font-size:20px"></p>

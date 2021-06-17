@@ -183,13 +183,20 @@ def perfil_tipo_pasar_a_comun(request):
     for cl in clientes:
         if cl.usuario.id == request.user.id:
             cliente = cl
+    
+    if request.POST.get('confirmar'):
+        cliente_modificado = c.objects.get(id = cliente.id)
+        cliente_modificado.gold = False
+        cliente_modificado.save()
 
-    cliente_modificado = c.objects.get(id = cliente.id)
-    cliente_modificado.gold = False
-    cliente_modificado.save()
+        contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d')}
+        return render(request,"perfil.html",contexto)
+    else:
+        contexto = {"cliente":cliente,"error":None,"fecha_de_vencimiento":cliente.tarjeta_fecha_vencimiento.strftime('%Y-%m-%d')}
+        return render(request,"perfil_tipo_gold.html",contexto)
 
-    contexto = {"cliente":cliente_modificado,"fecha_nacimiento":cliente_modificado.fecha_nacimiento.strftime('%Y-%m-%d')}
-    return render(request,"perfil.html",contexto)
+def perfil_tipo_pasar_a_comun_confirmar(request):
+    return render(request,"perfil_tipo_pasar_a_comun.html")
 
 def perfil_tipo_comun(request,error=None):
     cliente = "Inicializo porque sino no anda"

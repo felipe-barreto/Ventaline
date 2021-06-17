@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from PaginaWeb.views import buscar_viaje, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
     home, mis_comentarios, mis_compras, registrar, perfil, perfil_editar, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar,\
-    perfil_tipo_pasar_a_comun, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
+    perfil_tipo_pasar_a_comun, perfil_tipo_pasar_a_comun_confirmar, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
 from django.contrib.auth import views as auth_views
 
 
@@ -37,6 +37,7 @@ urlpatterns = [
     path('perfil/tipo/gold/', perfil_tipo_gold, name='perfil_tipo_gold'),
     path('perfil/tipo/gold/editar/', perfil_tipo_gold_editar, name='perfil_tipo_gold_editar'),
     path('perfil/tipo/pasar_a_comun/', perfil_tipo_pasar_a_comun, name='perfil_tipo_pasar_a_comun'),
+    path('perfil/tipo/pasar_a_comun/confirmar/', perfil_tipo_pasar_a_comun_confirmar, name='perfil_tipo_pasar_a_comun_confirmar'),
     path('perfil/tipo/comun/', perfil_tipo_comun, name='perfil_tipo_comun'),
     path('perfil/tipo/comun/editar/', perfil_tipo_comun_editar, name='perfil_tipo_comun_editar'),
     path('agregar_comentario/', AgregarComentarioView.as_view(template_name = 'agregar_comentario.html'), name='agregar_comentario'),
