@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.http.request import RAISE_ERROR
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
 from Tablas.models import Cliente as c, Compra_Producto
 from Tablas.models import Comentario as comentarios
@@ -402,3 +402,12 @@ def compra_cancelar(request,compra):
         devolucion = '50%'
     context = {'devolucion': devolucion}
     return render(request, 'compra_cancelar.html', context)
+
+class EliminarCuentaView(DeleteView):
+    model = c
+    template_name = 'eliminar_cuenta.html'
+    success_url = reverse_lazy('eliminar_cuenta_confirmar')
+
+def eliminar_cuenta_confirmar(request):
+    logout(request)
+    return redirect('home')

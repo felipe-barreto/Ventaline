@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from PaginaWeb.views import buscar_viaje, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
     home, mis_comentarios, mis_compras, registrar, perfil, perfil_editar, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar,\
-    perfil_tipo_pasar_a_comun, perfil_tipo_pasar_a_comun_confirmar, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView, EliminarComentarioView
+    perfil_tipo_pasar_a_comun, perfil_tipo_pasar_a_comun_confirmar, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView,\
+    EliminarComentarioView, EliminarCuentaView, eliminar_cuenta_confirmar
 from django.contrib.auth import views as auth_views
 
 
@@ -50,4 +51,6 @@ urlpatterns = [
     path('compra_viaje_tarjeta/<int:viaje>', compra_viaje_tarjeta, name='compra_viaje_tarjeta'),
     path('compra_detalle/<int:compra>',compra_detalle, name='compra_detalle'),
     path('compra_cancelar/<int:compra>',compra_cancelar, name='compra_cancelar'),
+    path('eliminar_cuenta/<int:pk>', EliminarCuentaView.as_view(), name='eliminar_cuenta'),
+    path('eliminar_cuenta_confirmar/', eliminar_cuenta_confirmar, name='eliminar_cuenta_confirmar'),
 ]
