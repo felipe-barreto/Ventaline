@@ -29,6 +29,7 @@ urlpatterns = [
     path('mis_comentarios/', mis_comentarios, name='mis_comentarios'),
     path('mis_compras/', mis_compras, name='mis_compras'),
     path('registrar/', registrar, name='registrar'),
+    path("soychofer/", auth_views.LoginView.as_view(template_name = 'chofer_login.html'), name="soychofer"),
     path('login/', auth_views.LoginView.as_view(template_name = 'login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name = 'logout.html'), name='logout'),
     path('perfil/', perfil, name='perfil'),

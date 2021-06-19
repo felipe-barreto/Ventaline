@@ -19,11 +19,21 @@ from Tablas.models import Producto
 import pytz
 
 def home(request):
-    viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
-    ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
-    ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
-    context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
-    return render(request, 'home.html', context)
+    try:
+        if request.user.cliente:
+            viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
+            ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
+            ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
+            context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
+            return render(request, 'home.html', context)
+    except:
+        viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
+        viajes_del_chofer = []
+        for viaje in viajes_ordenados:
+            if viaje.ruta.combi.chofer == request.user.chofer:
+                viajes_del_chofer.append (viaje)
+        context =  {'viajes': viajes_del_chofer}
+        return render(request, 'chofer_home.html', context)
 
 def mis_comentarios(request):
     todos_los_comentarios = comentarios.objects.all()

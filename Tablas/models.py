@@ -115,6 +115,7 @@ class Cliente(sd.SoftDeletionModel):
 
     
 class Chofer(sd.SoftDeletionModel):
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='chofer')
     nombre = models.CharField(max_length=20)
     apellido = models.CharField(max_length=20)
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_chofer])
@@ -127,6 +128,14 @@ class Chofer(sd.SoftDeletionModel):
     
     def __str__(self):
         return 'Email: %s, Nombre: %s, Apellido: %s'%(self.email, self.nombre, self.apellido)
+    
+    def save(self, *args, **kwargs):
+        user =  CustomUser()
+        user.email = self.email
+        user.set_password(self.contraseña)
+        user.save()
+        self.usuario = user
+        super(Chofer, self).save(*args, **kwargs)
     
 class Combi(sd.SoftDeletionModel):
     modelo = models.CharField(max_length=15)
