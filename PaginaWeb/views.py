@@ -20,20 +20,20 @@ import pytz
 
 def home(request):
     try:
-        if request.user.cliente:
+        if request.user.chofer:
             viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
-            ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
-            ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
-            context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
-            return render(request, 'home.html', context)
+            viajes_del_chofer = []
+            for viaje in viajes_ordenados:
+                if viaje.ruta.combi.chofer == request.user.chofer:
+                    viajes_del_chofer.append (viaje)
+            context =  {'viajes': viajes_del_chofer}
+            return render(request, 'chofer_home.html', context)
     except:
         viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
-        viajes_del_chofer = []
-        for viaje in viajes_ordenados:
-            if viaje.ruta.combi.chofer == request.user.chofer:
-                viajes_del_chofer.append (viaje)
-        context =  {'viajes': viajes_del_chofer}
-        return render(request, 'chofer_home.html', context)
+        ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
+        ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
+        context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
+        return render(request, 'home.html', context)
 
 def mis_comentarios(request):
     todos_los_comentarios = comentarios.objects.all()
@@ -421,3 +421,23 @@ class EliminarCuentaView(DeleteView):
 def eliminar_cuenta_confirmar(request):
     logout(request)
     return redirect('home')
+
+def tiene_viajes(request):
+    cliente = "Inicializo porque sino no anda"
+    clientes = c.objects.all()
+    for cl in clientes:
+        if cl.usuario.id == request.user.id:
+            cliente = cl
+
+    tiene_viajes_sin_hacer = False
+    compras = Compra.objects.all()
+    for com in compras:
+        if (com.cliente.usuario.id == request.user.id) and (com.estado == "Pendiente"):
+            tiene_viajes_sin_hacer = True
+    
+    if tiene_viajes_sin_hacer:
+        contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d'),"tiene_viajes":True}
+        return render(request,"perfil.html",contexto)
+    else:
+        direccion = "eliminar_cuenta/" + str(cliente.pk)
+        return redirect(direccion)

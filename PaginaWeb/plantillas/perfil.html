@@ -64,7 +64,10 @@
                     <button class="btn btn-primary btn-block" type="submit">Editar</button>
                 </form>
                 <hr>
-                <p><strong><a href="{% url 'eliminar_cuenta' cliente.pk %}">Eliminar cuenta</a></strong></p>
+                {% if tiene_viajes %}
+                    <p style="color: red;">No puede eliminar la cuenta si tiene viajes pendientes, realice o cancele los viajes antes de eliminarla</p>
+                {% endif %}
+                <p><strong><a href="{% url 'tiene_viajes' %}">Eliminar cuenta</a></strong></p>
                 <p>
                     &nbsp;
                 </p>

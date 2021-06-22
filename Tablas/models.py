@@ -20,7 +20,6 @@ import pytz
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
-
 class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
@@ -62,16 +61,20 @@ class CustomUser(AbstractUser,sd.SoftDeletionModel):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return "Nombre: " + self.first_name + ". Apellido: " + self.last_name + ". Email: " + str(self.email) + "."
+
+    def save(self, **kwargs):
+        if ("pbkdf2" not in self.password):
+            self.set_password(self.password)
+        super(CustomUser, self).save(**kwargs)
 
 ##################################################################################################
 #Clases
 ##################################################################################################
 
 class Cliente(sd.SoftDeletionModel):
-    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente')
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente',null=True)
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
-    #email = models.EmailField(max_length=40,validators=[sd.validar_email_cliente])
     cantidad_de_caracteres_de_la_contraseña = models.CharField(max_length=50,null=True,blank=True)
     fecha_nacimiento = models.DateField()
     gold = models.BooleanField(default=False)
@@ -98,7 +101,7 @@ class Cliente(sd.SoftDeletionModel):
         if (date.today() - timedelta(days=(18*365))) < self.fecha_nacimiento:
             raise ValidationError('Debes ser mayor de edad para poder registrarte')
 
-        if (self.gold == False)and ((self.tarjeta_cod_seguridad!=None) or (self.tarjeta_fecha_vencimiento!=None) or (self.tarjeta_numero!=None) or (self.tarjeta_nombre_titular!=None)):
+        if (self.gold == False) and ((self.tarjeta_cod_seguridad!=None) or (self.tarjeta_fecha_vencimiento!=None) or (self.tarjeta_numero!=None) or (self.tarjeta_nombre_titular!=None)):
             raise ValidationError('Si quiere ingresar una tarjeta debe ser gold')
         
         if (self.gold) and ((self.tarjeta_cod_seguridad==None) or (self.tarjeta_fecha_vencimiento==None) or (self.tarjeta_numero==None) or (self.tarjeta_nombre_titular==None)):
@@ -115,27 +118,25 @@ class Cliente(sd.SoftDeletionModel):
 
     
 class Chofer(sd.SoftDeletionModel):
-    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='chofer')
-    nombre = models.CharField(max_length=20)
-    apellido = models.CharField(max_length=20)
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='chofer',limit_choices_to={'chofer':None,'cliente':None,'is_staff':False})
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_chofer])
-    email = models.EmailField(max_length=40,validators=[sd.validar_email_chofer])
-    contraseña = models.CharField(max_length=15)
     telefono = models.CharField(max_length=15)
     class Meta: 
         verbose_name = "chofer"
         verbose_name_plural = "choferes"
     
     def __str__(self):
-        return 'Email: %s, Nombre: %s, Apellido: %s'%(self.email, self.nombre, self.apellido)
-    
-    def save(self, *args, **kwargs):
-        user =  CustomUser()
-        user.email = self.email
-        user.set_password(self.contraseña)
-        user.save()
-        self.usuario = user
-        super(Chofer, self).save(*args, **kwargs)
+        return 'Email: %s, Nombre: %s, Apellido: %s'%(self.usuario.email, self.usuario.first_name, self.usuario.last_name)
+
+    def delete(self):
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.usuario.email in u.email:
+                coincidencias += 1 
+        self.usuario.email = self.usuario.email + str(coincidencias)
+        self.usuario.delete()
+        return super(Chofer,self).delete()
     
 class Combi(sd.SoftDeletionModel):
     modelo = models.CharField(max_length=15)
@@ -148,7 +149,14 @@ class Combi(sd.SoftDeletionModel):
         return 'Patente: %s, Tipo: %s, Cantidad de asientos: %s'%(self.patente, self.tipo, self.cant_asientos)
 
     def delete(self):
-        nuevo_chofer = Chofer(nombre=self.chofer.nombre,apellido=self.chofer.apellido,dni=self.chofer.dni,email=self.chofer.email,contraseña=self.chofer.contraseña,telefono=self.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.chofer.usuario.email in u.email:
+                coincidencias += 1 
+        nuevo_usuario = CustomUser(email=(self.chofer.usuario.email + str(coincidencias)),password=self.chofer.usuario.password,first_name=self.chofer.usuario.first_name,last_name=self.chofer.usuario.last_name,is_deleted=True,deleted_at=timezone.now())
+        nuevo_usuario.save()
+        nuevo_chofer = Chofer(usuario=nuevo_usuario,dni=self.chofer.dni,telefono=self.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
         nuevo_chofer.save()
         self.chofer = nuevo_chofer
         return super(Combi,self).delete()
@@ -208,7 +216,14 @@ class Ruta(sd.SoftDeletionModel):
         nuevo_destino = Lugar(provincia=self.ciudad_destino.provincia,nombre_ciudad=self.ciudad_destino.nombre_ciudad,observaciones=self.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
         nuevo_destino.save()
         self.ciudad_destino = nuevo_destino
-        nuevo_chofer = Chofer(nombre=self.combi.chofer.nombre,apellido=self.combi.chofer.apellido,dni=self.combi.chofer.dni,email=self.combi.chofer.email,contraseña=self.combi.chofer.contraseña,telefono=self.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.combi.chofer.usuario.email in u.email:
+                coincidencias += 1 
+        nuevo_usuario = CustomUser(email=(self.combi.chofer.usuario.email + str(coincidencias)),password=self.combi.chofer.usuario.password,first_name=self.combi.chofer.usuario.first_name,last_name=self.combi.chofer.usuario.last_name,is_deleted=True,deleted_at=timezone.now())
+        nuevo_usuario.save()
+        nuevo_chofer = Chofer(usuario=nuevo_usuario,dni=self.combi.chofer.dni,telefono=self.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
         nuevo_chofer.save()
         nueva_combi = Combi(modelo=self.combi.modelo,patente=self.combi.patente,cant_asientos=self.combi.cant_asientos,tipo=self.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
         nueva_combi.save()
@@ -235,7 +250,14 @@ class Viaje(sd.SoftDeletionModel):
         nuevo_origen.save()
         nuevo_destino = Lugar(provincia=self.ruta.ciudad_destino.provincia,nombre_ciudad=self.ruta.ciudad_destino.nombre_ciudad,observaciones=self.ruta.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
         nuevo_destino.save()
-        nuevo_chofer = Chofer(nombre=self.ruta.combi.chofer.nombre,apellido=self.ruta.combi.chofer.apellido,dni=self.ruta.combi.chofer.dni,email=self.ruta.combi.chofer.email,contraseña=self.ruta.combi.chofer.contraseña,telefono=self.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.ruta.combi.chofer.usuario.email in u.email:
+                coincidencias += 1 
+        nuevo_usuario = CustomUser(email=(self.ruta.combi.chofer.usuario.email + str(coincidencias)),password=self.ruta.combi.chofer.usuario.password,first_name=self.ruta.combi.chofer.usuario.first_name,last_name=self.ruta.combi.chofer.usuario.last_name,is_deleted=True,deleted_at=timezone.now())
+        nuevo_usuario.save()
+        nuevo_chofer = Chofer(usuario=nuevo_usuario,dni=self.ruta.combi.chofer.dni,telefono=self.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
         nuevo_chofer.save()
         nueva_combi = Combi(modelo=self.ruta.combi.modelo,patente=self.ruta.combi.patente,cant_asientos=self.ruta.combi.cant_asientos,tipo=self.ruta.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
         nueva_combi.save()
@@ -282,7 +304,14 @@ class Compra(sd.SoftDeletionModel):
         nuevo_origen.save()
         nuevo_destino = Lugar(provincia=self.viaje.ruta.ciudad_destino.provincia,nombre_ciudad=self.viaje.ruta.ciudad_destino.nombre_ciudad,observaciones=self.viaje.ruta.ciudad_destino.observaciones,is_deleted=True,deleted_at=timezone.now())
         nuevo_destino.save()
-        nuevo_chofer = Chofer(nombre=self.viaje.ruta.combi.chofer.nombre,apellido=self.viaje.ruta.combi.chofer.apellido,dni=self.viaje.ruta.combi.chofer.dni,email=self.viaje.ruta.combi.chofer.email,contraseña=self.viaje.ruta.combi.chofer.contraseña,telefono=self.viaje.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
+        usuarios = CustomUser.all_objects.all()
+        coincidencias = 0
+        for u in usuarios:
+            if self.viaje.ruta.combi.chofer.usuario.email in u.email:
+                coincidencias += 1 
+        nuevo_usuario = CustomUser(email=(self.viaje.ruta.combi.chofer.usuario.email + str(coincidencias)),password=self.viaje.ruta.combi.chofer.usuario.password,first_name=self.viaje.ruta.combi.chofer.usuario.first_name,last_name=self.viaje.ruta.combi.chofer.usuario.last_name,is_deleted=True,deleted_at=timezone.now())
+        nuevo_usuario.save()
+        nuevo_chofer = Chofer(usuario=nuevo_usuario,dni=self.viaje.ruta.combi.chofer.dni,telefono=self.viaje.ruta.combi.chofer.telefono,is_deleted=True,deleted_at=timezone.now())
         nuevo_chofer.save()
         nueva_combi = Combi(modelo=self.viaje.ruta.combi.modelo,patente=self.viaje.ruta.combi.patente,cant_asientos=self.viaje.ruta.combi.cant_asientos,tipo=self.viaje.ruta.combi.tipo,chofer=nuevo_chofer,is_deleted=True,deleted_at=timezone.now())
         nueva_combi.save()

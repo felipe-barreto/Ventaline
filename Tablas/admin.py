@@ -4,11 +4,17 @@ from django.contrib.auth.models import Group
 
 # Register your models here.
 
+class CustomUserAdmin(admin.ModelAdmin):
+    fields = ('first_name', 'last_name', 'email', 'password')
+    list_display = ('first_name', 'last_name', 'email', 'password')
+
+    def has_add_permission(self,request):
+        return True
+
 class ClientesAdmin(admin.ModelAdmin):
     list_display=("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
     fields = ("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
-
 
     def has_add_permission(self,request):
         return False
@@ -20,13 +26,13 @@ class ClientesAdmin(admin.ModelAdmin):
         return False
 
 class ChoferesAdmin(admin.ModelAdmin):
-    list_display=("nombre","apellido","dni","email","contraseña","telefono")
-    fields = ("nombre","apellido","dni","email","contraseña","telefono",)
+    list_display=("usuario","dni","telefono")
+    fields = ("usuario","dni","telefono")
     #search_fields=('nombre','apellido',)
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['email','contraseña','is_deleted','deleted_at']
+            return ['usuario','is_deleted','deleted_at']
         else:
             return ['is_deleted','deleted_at']
 
@@ -123,3 +129,4 @@ admin.site.register(tablas.Viaje, ViajesAdmin)
 admin.site.register(tablas.Comentario, ComentariosAdmin)
 admin.site.register(tablas.Compra, ComprasAdmin)
 admin.site.unregister(Group)
+admin.site.register(tablas.CustomUser, CustomUserAdmin)
