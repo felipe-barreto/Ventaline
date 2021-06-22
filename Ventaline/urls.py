@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import buscar_viaje, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
+from PaginaWeb.views import buscar_viaje, chofer_perfil_contraseña_confirmar, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
     home, mis_comentarios, mis_compras, registrar, perfil, perfil_editar, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar,\
     perfil_tipo_pasar_a_comun, perfil_tipo_pasar_a_comun_confirmar, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView,\
-    EliminarComentarioView, EliminarCuentaView, eliminar_cuenta_confirmar, tiene_viajes
+    EliminarComentarioView, EliminarCuentaView, eliminar_cuenta_confirmar, tiene_viajes, chofer_perfil, chofer_perfil_editar, CambiarContraseñaChofer, chofer_perfil_contraseña_confirmar
 from django.contrib.auth import views as auth_views
 
 
@@ -55,4 +55,8 @@ urlpatterns = [
     path('tiene_viajes/eliminar_cuenta/<int:pk>', EliminarCuentaView.as_view(), name='eliminar_cuenta'),
     path('eliminar_cuenta_confirmar/', eliminar_cuenta_confirmar, name='eliminar_cuenta_confirmar'),
     path('tiene_viajes/', tiene_viajes, name='tiene_viajes'),
+    path('chofer_perfil/', chofer_perfil, name='chofer_perfil'),
+    path('chofer_perfil/editar', chofer_perfil_editar, name='chofer_perfil_editar'),
+    path('chofer_perfil/contraseña', CambiarContraseñaChofer.as_view(template_name = 'chofer_perfil_contraseña.html'), name='chofer_perfil_contraseña'),
+    path('chofer_perfil/contraseña/confirmar', chofer_perfil_contraseña_confirmar, name='chofer_perfil_contraseña_confirmar'),
 ]

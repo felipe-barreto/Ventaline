@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Cambiar Contraseña{% endblock %}
+{% block content %}
+
+<h1>Cambiar contraseña de chofer</h1>
+<br><br/>
+<div class = "form-group">
+    <form method= "POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class = "btn btn-secondary">Cambiar</button>
+</div>
+
+{% endblock %}

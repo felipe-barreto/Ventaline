@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<html>
+    <head>
+        <h1><strong>Mi perfil</strong></h1>
+        {% if editado %}
+            <p style="color: green;">Se guardó la edición del perfil</p>
+        {% endif %}
+        <body>
+            {% if chofer %}
+                <form action="{% url 'chofer_perfil_editar' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <h4>Nombre:</h4>
+                        <p><input class="form-control mb-2" value={{chofer.usuario.first_name}} name="nombre_ingresado" style="font-size:20px"></p>
+                    </div>
+                    <div>
+                        <h4>Apellido:</h4>
+                        <p><input class="form-control mb-2" value={{chofer.usuario.last_name}} name="apellido_ingresado" style="font-size:20px"></p>
+                    </div>
+                    <div>
+                        <h4>Email:</h4>
+                        <p><input class="form-control mb-2" value={{chofer.usuario.email}} style="font-size:20px" readonly=True></p>
+                    </div>
+                    <div>
+                        <h4>Contraseña:</h4>
+                        <p><input class="form-control mb-2" value="**********" style="font-size:20px" readonly=True></p>
+                        <p class="mt-3">Si desea cambiar su contraseña haz clic <a href="{% url 'chofer_perfil_contraseña' %}">aquí</a>.</p>
+                    </div>
+                    <div>
+                        <h4>Dni:</h4>
+                        {% if error_con_dni == "Ya existe el dni" %}
+                            <p style="color: red;">Ya hay un cliente con ese dni, por favor ingrese otro</p>
+                        {% endif %}
+                        <p><input class="form-control mb-2" value={{chofer.dni}} name="dni_ingresado" style="font-size:20px"></p>
+                    </div>
+                    <button class="btn btn-primary btn-block" type="submit">Editar</button>
+                </form>
+                <hr>
+
+                <p>
+                    &nbsp;
+                </p>
+            {% else %}
+                <h1>No hay un chofer con ese dni</h1>
+            {% endif %}
+        </body>
+    </head>
+</html>
+{% endblock content %}

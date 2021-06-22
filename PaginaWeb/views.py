@@ -4,8 +4,10 @@ from django.http.request import RAISE_ERROR
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import PasswordChangeView 
+from django.contrib.auth.forms import PasswordChangeForm
 from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
-from Tablas.models import Cliente as c, Compra_Producto
+from Tablas.models import Cliente as c, Compra_Producto, Chofer as cho
 from Tablas.models import Comentario as comentarios
 from django.views.generic import CreateView, UpdateView, DeleteView
 from Tablas.models import CustomUser
@@ -449,3 +451,55 @@ def tiene_viajes(request):
     else:
         direccion = "eliminar_cuenta/" + str(cliente.pk)
         return redirect(direccion)
+
+def chofer_perfil(request):
+    chofer = "Inicializo porque sino no anda"
+    choferes = cho.objects.all()
+    for c in choferes:
+        if c.usuario.id == request.user.id:
+            chofer = c
+
+    contexto = {"chofer":chofer}
+    return render(request,"chofer_perfil.html",contexto)
+
+def chofer_perfil_editar(request):
+    editado_correctamente = True
+
+    chofer = "Inicializo porque sino no anda"
+    choferes = cho.objects.all()
+    for c in choferes:
+        if c.usuario.id == request.user.id:
+            chofer = c
+
+
+    nuevo_nombre = request.POST["nombre_ingresado"]
+    nuevo_apellido = request.POST["apellido_ingresado"]
+    nuevo_dni = request.POST["dni_ingresado"]
+
+    usuario_modificado = CustomUser.objects.get(id = request.user.id)
+    usuario_modificado.first_name = nuevo_nombre
+    usuario_modificado.last_name = nuevo_apellido
+    usuario_modificado.save()
+
+    chofer_modificado = cho.objects.get(id = chofer.id)
+    chofer_modificado.usuario = usuario_modificado
+
+    error_con_dni = None
+    for c in choferes:
+        if c.usuario.id != request.user.id and c.dni == nuevo_dni:
+            error_con_dni = "Ya existe el dni"
+            editado_correctamente = False
+    if error_con_dni != "Ya existe el dni":
+        chofer_modificado.dni = nuevo_dni
+
+    chofer_modificado.save()
+
+    contexto = {"chofer":chofer_modificado,"error_con_dni":error_con_dni,"editado":editado_correctamente}
+    return render(request,"chofer_perfil.html",contexto)
+
+class CambiarContraseñaChofer(PasswordChangeView):
+    from_class= PasswordChangeForm
+    success_url =  reverse_lazy('chofer_perfil_contraseña_confirmar')
+
+def chofer_perfil_contraseña_confirmar(request):
+    return render(request,"chofer_perfil_contraseña_confirmar.html")
