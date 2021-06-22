@@ -73,7 +73,7 @@ class CustomUser(AbstractUser,sd.SoftDeletionModel):
 ##################################################################################################
 
 class Cliente(sd.SoftDeletionModel):
-    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente',null=True)
+    usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente')
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
     cantidad_de_caracteres_de_la_contraseña = models.CharField(max_length=50,null=True,blank=True)
     fecha_nacimiento = models.DateField()
