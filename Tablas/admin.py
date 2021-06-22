@@ -86,7 +86,10 @@ class ViajesAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request,obj):
         if obj:
-            return ['ruta','fecha_hora','precio','is_deleted','deleted_at']
+            if len(obj.compras.all())>0:
+                return ['ruta','fecha_hora','precio','is_deleted','deleted_at']
+            else:
+                return ['ruta','fecha_hora','is_deleted','deleted_at']
         else:
             return ['is_deleted','deleted_at']
 

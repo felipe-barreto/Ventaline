@@ -15,16 +15,21 @@
     <h3>Productos:</h3>
     {% if prods_sel %}
     {% for producto in prods_sel %}
-        <p><strong>{{ producto.0 }}</strong> - cantidad: {{producto.1}}</p>
+        <p><strong>{{ producto.0 }}</strong> - cantidad: {{producto.1}} - precio por unidad: ${{producto.3}}</p>
     {% endfor %}
     {% else %}
         <p>No hay productos seleccionados</p>
     {% endif %}
 </div>
 <div class="content-section">
+    <h3>Confirmar compra:</h3>
+    <p><strong>Pasajes x{{compra.asientos}}: </strong>${{precio_pasajes}}</p>
+    <p><strong>Productos: </strong>${{precio_productos}}</p>
     {% if user.cliente.gold %}
-        <h4><strong>Descuento: 10%</strong></h4>
+        <p><strong>Subtotal: </strong>${{subtotal}}</p>
+        <p><strong>Descuento gold 10%: </strong>- ${{descuento}}</p>
     {% endif %}
+    <hr>
     <h4><strong>Precio total: </strong>${{compra.precio}}</h4>
     <form method='POST' action="{% url 'compra_viaje_confirmar' compra.viaje.pk %}"> {% csrf_token %}
         <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">

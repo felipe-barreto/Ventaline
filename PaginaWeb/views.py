@@ -308,7 +308,7 @@ def compra_viaje_productos(request, viaje, producto):
         if request.POST.get('agregar'):
             prod = Producto.objects.get(id=producto)
             lis = list(request.session['prods_sel'])
-            lis.append([prod.nombre, request.POST['cant_producto'], producto])
+            lis.append([prod.nombre, request.POST['cant_producto'], producto, prod.precio])
             request.session['prods_sel'] = lis
             #request.session['prods_sel'].extend([[prod.nombre, request.POST['cant_producto']]])
         elif request.POST.get('buscar'):
@@ -341,14 +341,22 @@ def compra_viaje_productos(request, viaje, producto):
 
 def compra_viaje_confirmar(request, viaje):
     v = viajes.objects.get(id=viaje)
-    precio_total=int(request.session['compra']['precio'])
+    precio_pasajes = int(request.session['compra']['precio'])
+    precio_total = precio_pasajes
+    precio_productos = 0
     for prod in request.session['prods_sel']:
         p = Producto.objects.get(nombre=prod[0])
-        precio_total += int((p.precio*int(prod[1])))
+        precio_productos += int((p.precio*int(prod[1])))
+    precio_total += precio_productos
+    subtotal = precio_total
     if request.user.cliente.gold:
+        descuento = (precio_total*0.1)
         precio_total = (precio_total*0.9)
     compra = Compra(viaje=v,precio=precio_total,cliente=request.user.cliente,asientos=request.session['compra']['asientos'],estado='Pendiente')
-    context = {'compra': compra, 'prods_sel': request.session['prods_sel']}
+    if request.user.cliente.gold:
+        context = {'compra': compra, 'prods_sel': request.session['prods_sel'], 'precio_pasajes': precio_pasajes, 'precio_productos': precio_productos, 'subtotal': subtotal, 'descuento': descuento}
+    else:
+        context = {'compra': compra, 'prods_sel': request.session['prods_sel'], 'precio_pasajes': precio_pasajes, 'precio_productos': precio_productos, 'subtotal': subtotal}
     if request.method == 'POST':
         if request.POST.get('confirmar'):
             compra.save()
