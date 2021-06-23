@@ -11,7 +11,7 @@
             <p style="color: red;"> Para comprar un viaje debe iniciar sesión. </p>
         {% else %}
             {% if user.cliente.suspendido %} 
-                <p style="color: red;"> Tu cuenta se encuentra suspendida por el momento. </p>
+                <p style="color: red;"> Desde el día {{user.cliente.fecha_suspension}} tu cuenta se encuentra suspendida por presentar síntomas de COVID-19, por 15 días no podrás utilizar el sistema, todos tus viajes con fecha en estos 15 días fueron cancelados con reembolso del 100%. </p>
             {% endif %}
         {% endif %}
         {% for viaje in viajes %}

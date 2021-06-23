@@ -35,6 +35,16 @@ def home(request):
         ultimos_viajes = list(islice(viajes_ordenados, 0, 10))
         ultimos_comentarios = list(islice(reversed(comentarios.objects.all()), 0, 5)) #obtengo los ultimos 5 comentarios
         context =  {'comentarios': ultimos_comentarios, 'viajes': ultimos_viajes}
+        try: 
+            #verifica si tiene suspension y si corresponde sacarsela
+            if request.user.cliente:
+                if request.user.cliente.suspendido:
+                    fin_suspension = request.user.cliente.fecha_suspension + timedelta(days=15)
+                    if fin_suspension <= date.today():
+                        request.user.cliente.suspendido = False
+                        request.user.cliente.save()
+        except:
+            pass
         return render(request, 'home.html', context)
 
 def mis_comentarios(request):
@@ -538,8 +548,18 @@ def chofer_pasajero_suspender(request, compra):
     cliente.suspendido = True
     cliente.fecha_suspension = date.today()
 
-    #compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
-    #continuará
+    compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
+    limite_suspension = date.today() + timedelta(days=15)
+    if comp in compras_cliente:
+        compras_cliente.remove(comp)
+    compras_cancelar = []
+    for c in compras_cliente:
+        if limite_suspension>c.viaje.fecha_hora.date():
+            compras_cancelar.append(c)
+    for compra_cancelar in compras_cancelar:
+        for p in compra_cancelar.compra_producto.all():
+            p.delete()
+        compra_cancelar.delete()
 
     cliente.save()
     context = {'cliente': cliente}
