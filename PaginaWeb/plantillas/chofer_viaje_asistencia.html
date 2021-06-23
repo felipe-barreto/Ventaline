@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if viaje.estado == "Pendiente" %}
+    {{ viaje.estado }}
+{% endif %}
+
+<div class="content-section">
+    <h3>Viaje:</h3>
+    <p><strong>Origen: </strong> {{viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{viaje.ruta.ciudad_destino}}
+    </p>
+    <p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
+    </p>
+    <p><strong>Precio por asiento: </strong> ${{viaje.precio}}
+    </p>
+    <p><strong>Asientos disponibles: </strong> {{viaje.asientos_disponibles}}
+    </p>
+    <hr>
+    <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
+        <p><input type='submit' name='vender_pasajes' value='Vender pasajes' class="btn btn-outline-info"></p>
+    </form>
+</div>
+<div class="content-section">
+    <h3>Pasajeros:</h3>
+    <table cellspacing="1" cellpadding="4" border="1">
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">DNI</th>
+          <th scope="col">Cant. pasajes</th>
+          <th scope="col">Estado</th>
+        </tr>
+        {% for compra in compras %}
+            {% include "pasajero.html" %}
+        {% endfor %}
+    </table>
+</div>
+<div class="content-section">
+    <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
+        <p><input type='submit' name='cancelar_viaje' value='Cancelar viaje' class="btn btn-outline-info">
+            &nbsp<input type='submit' name='iniciar_viaje' value='Iniciar viaje' class="btn btn-outline-info"></p>
+    </form>
+</div>
+
+{% endblock content %}

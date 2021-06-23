@@ -9,6 +9,10 @@
         <ul class="list-group">
         {% if not user.cliente %} 
             <p style="color: red;"> Para comprar un viaje debe iniciar sesión. </p>
+        {% else %}
+            {% if user.cliente.suspendido %} 
+                <p style="color: red;"> Tu cuenta se encuentra suspendida por el momento. </p>
+            {% endif %}
         {% endif %}
         {% for viaje in viajes %}
             {% include "viaje.html" %}

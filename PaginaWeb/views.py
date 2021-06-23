@@ -503,3 +503,44 @@ class CambiarContraseñaChofer(PasswordChangeView):
 
 def chofer_perfil_contraseña_confirmar(request):
     return render(request,"chofer_perfil_contraseña_confirmar.html")
+
+def chofer_viaje_asistencia(request,viaje):
+    v = viajes.objects.get(id=viaje)
+    compras = Compra.objects.filter(viaje=v)
+        
+    context = {'viaje': v, 'compras': compras}
+    return render(request,"chofer_viaje_asistencia.html", context)
+
+def chofer_pasajero_sintomas(request, compra, pasaje):
+    c = Compra.objects.get(id=compra)
+    if request.method == 'POST':
+        if request.POST.get('ingresar'):
+            if request.POST['cabeza'] == 'si':#combinacion que da covid
+                c.estado = 'Rechazada'
+                c.save()
+                return redirect("chofer_pasajero_suspender", compra)
+            else:
+                if int(pasaje) == int(c.asientos):
+                    c.estado = 'Aceptada'
+                    c.save()
+                    return redirect("chofer_viaje_asistencia", c.viaje.id)
+                else:
+                    return redirect("chofer_pasajero_sintomas", compra, (int(pasaje)+1) )
+    context = {'pasaje': int(pasaje), 'compra':c}
+    return render(request,"chofer_pasajero_sintomas.html",context)
+
+def chofer_pasajero_suspender(request, compra):
+    comp = Compra.objects.get(id=compra)
+    if request.method == 'POST':
+        if request.POST.get('aceptar'):
+            return redirect("chofer_viaje_asistencia", comp.viaje.id)
+    cliente = comp.cliente  
+    cliente.suspendido = True
+    cliente.fecha_suspension = date.today()
+
+    #compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
+    #continuará
+
+    cliente.save()
+    context = {'cliente': cliente}
+    return render(request,"chofer_pasajero_suspender.html",context)

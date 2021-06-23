@@ -6,6 +6,13 @@
     <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
     </p>
     {% if user.cliente %}
-    <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
+        {% if user.cliente.suspendido %}
+            <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
+        {% else %}
+            <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
+        {% endif %}
+    {% endif %}
+    {% if user.chofer %}
+    <p style='text-align: right;'><a href="{% url 'chofer_viaje_asistencia' viaje.pk %}" >Seleccionar</a></p>
     {% endif %}
 </li>

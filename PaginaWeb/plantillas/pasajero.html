@@ -1,0 +1,10 @@
+<tr>
+    <td>{{compra.cliente.usuario.first_name}} {{compra.cliente.usuario.last_name}}</td>
+    <td>{{compra.cliente.dni}}</td>
+    <td>{{compra.asientos}}</td>
+    {% if compra.estado == "Pendiente" %}
+        <td><a href="{% url 'chofer_pasajero_sintomas' compra.pk 1 %}">{{compra.estado}}</a></td>
+    {% else %}
+        <td>{{compra.estado}}</td>
+    {% endif %}
+  </tr>

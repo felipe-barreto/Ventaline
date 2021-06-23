@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        El cliente {{cliente.usuario.first_name}} {{cliente.usuario.last_name}} tiene varios sintomas de COVID-19 por lo que no podrá participar de este viaje
+        ni de futuros viajes en los próximos 15 días, se le reembolsará el 100% del costo tanto de este
+        viaje como de todos los viajes que haya comprado con fecha de salida en los próximos 15 días.
+        <form method="POST">{% csrf_token %}
+            <p><input type='submit' name="aceptar" value='Aceptar' class="btn btn-outline-info">
+        </form>
+    </div>
+{% endblock content %}

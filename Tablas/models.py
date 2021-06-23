@@ -82,6 +82,8 @@ class Cliente(sd.SoftDeletionModel):
     tarjeta_fecha_vencimiento = models.DateField(null=True,blank=True,)
     tarjeta_nombre_titular = models.CharField(max_length=40,null=True,blank=True)
     tarjeta_numero = models.CharField(max_length=16,null=True,blank=True)
+    suspendido = models.BooleanField(default=False)
+    fecha_suspension = models.DateField(null=True,blank=True)
 
     def __str__(self):
         return 'Email: %s'%(self.usuario,)
@@ -235,6 +237,7 @@ class Viaje(sd.SoftDeletionModel):
     fecha_hora = models.DateTimeField()
     precio = models.IntegerField()
     datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
+    estado = models.TextField(max_length=30,null=True,blank=True,default='Pendiente')
     
     def __str__(self):
         return 'Ruta: ( %s ), Fecha: %s, Precio: %s'%(self.ruta,self.fecha_hora,self.precio)
