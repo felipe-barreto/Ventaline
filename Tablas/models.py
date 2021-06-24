@@ -275,7 +275,8 @@ class Viaje(sd.SoftDeletionModel):
     def asientos_disponibles(self):
         asientos_comprados = 0
         for c in self.compras.all():
-            asientos_comprados += int(c.asientos)
+            if c.estado != 'Rechazada':
+                asientos_comprados += int(c.asientos)
         return self.ruta.combi.cant_asientos-asientos_comprados
     
     def viaje_disponible(self):
