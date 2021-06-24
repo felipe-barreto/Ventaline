@@ -518,8 +518,11 @@ def chofer_viaje_asistencia(request,viaje):
     v = viajes.objects.get(id=viaje)
     compras = Compra.objects.filter(viaje=v)
         
-    context = {'viaje': v, 'compras': compras}
-    return render(request,"chofer_viaje_asistencia.html", context)
+    no_hay_pasajeros = False
+    if Compra.objects.filter(viaje=v).count() == 0:
+        no_hay_pasajeros = True
+    context = {'viaje': v, 'compras': compras,"no_hay_pasajeros":no_hay_pasajeros}
+    return render(request,"chofer_viaje_asistencia.html",context)
 
 def chofer_pasajero_sintomas(request, compra, pasaje):
     c = Compra.objects.get(id=compra)
@@ -547,6 +550,7 @@ def chofer_pasajero_suspender(request, compra):
     cliente = comp.cliente  
     cliente.suspendido = True
     cliente.fecha_suspension = date.today()
+    cliente.los_clientes_que_tuvieron_coronavirus = True
 
     compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
     limite_suspension = date.today() + timedelta(days=15)

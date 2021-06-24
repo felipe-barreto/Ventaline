@@ -22,17 +22,21 @@
 </div>
 <div class="content-section">
     <h3>Pasajeros:</h3>
-    <table cellspacing="1" cellpadding="4" border="1">
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">DNI</th>
-          <th scope="col">Cant. pasajes</th>
-          <th scope="col">Estado</th>
-        </tr>
-        {% for compra in compras %}
-            {% include "pasajero.html" %}
-        {% endfor %}
-    </table>
+    {% if no_hay_pasajeros %}
+        <p>No hay pasajeros de momento.</p>
+    {% else %}
+        <table cellspacing="1" cellpadding="4" border="1">
+            <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">DNI</th>
+            <th scope="col">Cant. pasajes</th>
+            <th scope="col">Estado</th>
+            </tr>
+            {% for compra in compras %}
+                {% include "pasajero.html" %}
+            {% endfor %}
+        </table>
+    {% endif %}
 </div>
 <div class="content-section">
     <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}

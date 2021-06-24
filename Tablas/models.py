@@ -84,6 +84,7 @@ class Cliente(sd.SoftDeletionModel):
     tarjeta_numero = models.CharField(max_length=16,null=True,blank=True)
     suspendido = models.BooleanField(default=False)
     fecha_suspension = models.DateField(null=True,blank=True)
+    los_clientes_que_tuvieron_coronavirus = models.BooleanField(default=False)
 
     def __str__(self):
         return 'Email: %s'%(self.usuario,)
