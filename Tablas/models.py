@@ -271,7 +271,8 @@ class Viaje(sd.SoftDeletionModel):
         return super(Viaje,self).delete()
     
     def viaje_futuro(self):
-        return (self.fecha_hora.replace(tzinfo=None)>datetime.now())
+        res = self.fecha_hora.replace(tzinfo=None) - timedelta(hours=3)
+        return (res>datetime.now())
     
     def asientos_disponibles(self):
         asientos_comprados = 0

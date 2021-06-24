@@ -23,7 +23,7 @@ import pytz
 def home(request):
     try:
         if request.user.chofer:
-            viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
+            viajes_ordenados = sorted(list(viajes.objects.all()),key=lambda a: a.fecha_hora)
             viajes_del_chofer = []
             for viaje in viajes_ordenados:
                 if viaje.ruta.combi.chofer == request.user.chofer:
