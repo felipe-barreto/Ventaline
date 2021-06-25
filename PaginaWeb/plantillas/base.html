@@ -43,10 +43,16 @@
                         {% if user.chofer %}
                             <a class="nav-item nav-link" href="{% url 'chofer_perfil' %}">Perfil chofer</a>
                         {% endif %}
-                        <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                        {% if not user.chofer %}
+                            <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                        {% else %}
+                            <a class="nav-item nav-link" href="{% url 'chofer_logout' %}">Cerrar sesión</a>
+                        {% endif %}
                     {% else %}
-                        <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar sesión</a>
-                        <a class="nav-item nav-link" href="{% url 'registrar' %}">Registrarse</a>
+                        {% if not "chofer" in request.path %}
+                            <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                            <a class="nav-item nav-link" href="{% url 'registrar' %}">Registrarse</a>
+                        {% endif %}
                     {% endif %}
                     </div>
                 </div>

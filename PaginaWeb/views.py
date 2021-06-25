@@ -440,7 +440,7 @@ class EliminarCuentaView(DeleteView):
 
 def eliminar_cuenta_confirmar(request):
     logout(request)
-    return redirect('home')
+    return render(request,'eliminar_cuenta_confirmar.html')
 
 def tiene_viajes(request):
     cliente = "Inicializo porque sino no anda"

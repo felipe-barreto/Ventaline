@@ -32,6 +32,7 @@ urlpatterns = [
     path("soychofer/", auth_views.LoginView.as_view(template_name = 'chofer_login.html'), name="soychofer"),
     path('login/', auth_views.LoginView.as_view(template_name = 'login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name = 'logout.html'), name='logout'),
+    path('chofer_logout/', auth_views.LogoutView.as_view(template_name = 'chofer_logout.html'), name='chofer_logout'),
     path('perfil/', perfil, name='perfil'),
     path('perfil/editar/', perfil_editar, name='perfil_editar'),
     path('perfil/contraseña/', perfil_contraseña, name='perfil_contraseña'),
