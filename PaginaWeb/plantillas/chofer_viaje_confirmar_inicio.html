@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="content-section">
+    <h3>¿Está seguro que desea iniciar el viaje?</h3>
+    <p>{{ help_text }} </p>
+    <form method="POST"> {% csrf_token %}
+        <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">
+            &nbsp<input type='submit' name='iniciar' value='Iniciar' class="btn btn-outline-info"></p>
+    </form>
+</div>
+
+{% endblock content %}

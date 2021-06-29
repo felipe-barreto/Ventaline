@@ -3,9 +3,10 @@
     </p>
     <p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Asientos disponibles: </strong> {{viaje.asientos_disponibles}} | <strong>Precio por asiento: </strong> ${{viaje.precio}}
     </p>
-    <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
+    <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}} | <strong>Estado: </strong> {{viaje.estado}}
     </p>
     {% if user.cliente %}
+        {% if viaje.estado == 'Pendiente' %}
         {% if user.cliente.suspendido %}
             {% if fin_suspension > viaje.fecha_hora.date %}
                 <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
@@ -14,6 +15,9 @@
             {% endif %}
         {% else %}
             <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
+        {% endif %}
+        {% else %}
+        <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
         {% endif %}
     {% endif %}
     {% if user.chofer %}

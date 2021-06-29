@@ -3,6 +3,7 @@
 
 <div class="content-section">
     <h3>Viaje:</h3>
+    <h5>Estado: {{ viaje.estado }}</h5>
     <p><strong>Origen: </strong> {{viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{viaje.ruta.ciudad_destino}}
     </p>
     <p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}}
@@ -12,9 +13,11 @@
     <p><strong>Asientos disponibles: </strong> {{viaje.asientos_disponibles}}
     </p>
     <hr>
+    {% if viaje.estado == 'Pendiente' %}
     <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
         <p><input type='submit' name='vender_pasajes' value='Vender pasajes' class="btn btn-outline-info"></p>
     </form>
+    {% endif %}
 </div>
 <div class="content-section">
     <h3>Pasajeros:</h3>
@@ -34,11 +37,20 @@
         </table>
     {% endif %}
 </div>
+
+{% if viaje.estado == 'Pendiente' %}
 <div class="content-section">
     <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
         <p><input type='submit' name='cancelar_viaje' value='Cancelar viaje' class="btn btn-outline-info">
             &nbsp<input type='submit' name='iniciar_viaje' value='Iniciar viaje' class="btn btn-outline-info"></p>
     </form>
 </div>
+{% endif %}
+{% if viaje.estado == 'Iniciado' %}
+<div class="content-section">
+    <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
+        <p><input type='submit' name='finalizar_viaje' value='Finalizar viaje' class="btn btn-outline-info"></p>
+</div>
+{% endif %}
 
 {% endblock content %}

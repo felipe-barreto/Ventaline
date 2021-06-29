@@ -519,6 +519,21 @@ def chofer_perfil_contraseña_confirmar(request):
 def chofer_viaje_asistencia(request,viaje):
     v = viajes.objects.get(id=viaje)
     compras = Compra.objects.filter(viaje=v)
+
+    if request.method == 'POST':
+        if request.POST.get('iniciar_viaje'):
+            for compra in compras:
+                if compra.estado == 'Pendiente':
+                    return redirect('chofer_viaje_confirmar_inicio', viaje, 1)
+            return redirect('chofer_viaje_confirmar_inicio', viaje, 0)
+        if request.POST.get('finalizar_viaje'):
+            return redirect('chofer_viaje_confirmar_finalizar', viaje)
+
+        elif request.POST.get('cancelar_viaje'):
+            pass
+
+        elif request.POST.get('vender_pasajes'):
+            pass
         
     no_hay_pasajeros = False
     if Compra.objects.filter(viaje=v).count() == 0:
@@ -587,3 +602,30 @@ def chofer_pasajero_suspender(request, compra):
     cliente.save()
     context = {'cliente': cliente}
     return render(request,"chofer_pasajero_suspender.html",context)
+
+def chofer_viaje_confirmar_inicio(request, viaje, estado):
+    v = viajes.objects.get(id=viaje)
+    compras = Compra.objects.filter(viaje=v)
+    if request.method == 'POST':
+        if request.POST.get('iniciar'):
+            for compra in compras:
+                if compra.estado == 'Pendiente':
+                    compra.estado = 'Ausente'
+                    compra.save()
+            v.estado = 'Iniciado'
+            v.save()
+        return redirect('chofer_viaje_asistencia', viaje)
+    if estado == 1:
+        context = {'help_text': 'Todavía hay pasajeros cuyos síntomas no han sido subidos al sistema, estos pasajeros serán contados como ausentes en el viaje y no se les reembolsará el dinero'}
+    else:
+        context = {'help_text': 'Los síntomas de todos los pasajeros han sido ingresados al sistema correctamente'}
+    return render(request, "chofer_viaje_confirmar_inicio.html", context)
+
+def chofer_viaje_confirmar_finalizar(request, viaje):
+    v = viajes.objects.get(id=viaje)
+    if request.method == 'POST':
+        if request.POST.get('finalizar'):
+            v.estado = 'Finalizado'
+            v.save()
+        return redirect('chofer_viaje_asistencia', viaje)
+    return render(request, "chofer_viaje_confirmar_finalizar.html")

@@ -18,7 +18,8 @@
         </ul>
     </p>
     <p><strong>Precio total: </strong> ${{compra.precio}}</p>
-    <p><strong>Estado:</strong> {{compra.estado}}</p>
+    <p><strong>Estado de la compra:</strong> {{compra.estado}}</p>
+    <p><strong>Estado del viaje:</strong> {{compra.viaje.estado}}</p>
     <p style='text-align: right;'>
         <a href="{% url 'mis_compras' %}" >Volver atrás</a>
         {% if cancelar %}

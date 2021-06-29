@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="content-section">
+    <h3>¿Está seguro que desea finalizar el viaje?</h3>
+    <form method="POST"> {% csrf_token %}
+        <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">
+            &nbsp<input type='submit' name='finalizar' value='Finalizar' class="btn btn-outline-info"></p>
+    </form>
+</div>
+
+{% endblock content %}
