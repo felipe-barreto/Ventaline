@@ -282,7 +282,7 @@ class Viaje(sd.SoftDeletionModel):
         return self.ruta.combi.cant_asientos-asientos_comprados
     
     def viaje_disponible(self):
-        return (self.viaje_futuro() and (self.asientos_disponibles()>0))
+        return (self.viaje_futuro() and (self.asientos_disponibles()>0) and self.estado == 'Pendiente')
     
     def fecha_coincide(self,fecha):
         return (self.fecha_hora.date() == fecha.date())

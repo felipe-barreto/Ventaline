@@ -41,7 +41,7 @@
 {% if viaje.estado == 'Pendiente' %}
 <div class="content-section">
     <form method='POST' action="{% url 'chofer_viaje_asistencia' viaje.pk %}"> {% csrf_token %}
-        <p><input type='submit' name='cancelar_viaje' value='Cancelar viaje' class="btn btn-outline-info">
+        <p><input type='submit' name='suspender_viaje' value='Suspender viaje' class="btn btn-outline-info">
             &nbsp<input type='submit' name='iniciar_viaje' value='Iniciar viaje' class="btn btn-outline-info"></p>
     </form>
 </div>

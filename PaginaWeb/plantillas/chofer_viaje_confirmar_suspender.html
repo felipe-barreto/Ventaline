@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="content-section">
+    <h3>¿Está seguro que desea suspender el viaje?</h3>
+    <p>Al suspender el viaje este no se realizará y se le enviará un mail a todos los pasajeros confirmando la suspensión del mismo, lo cual implica reembolsar el 100% de la compra a cada pasajero.</p>
+    <form method="POST"> {% csrf_token %}
+        <p><input type='submit' name='cancelar' value='Cancelar' class="btn btn-outline-info">
+            &nbsp<input type='submit' name='suspender' value='Suspender viaje' class="btn btn-outline-info"></p>
+    </form>
+</div>
+
+{% endblock content %}

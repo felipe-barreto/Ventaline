@@ -3,7 +3,10 @@
     </p>
     <p><strong>Tipo de combi: </strong> {{viaje.ruta.combi.tipo}} | <strong>Asientos disponibles: </strong> {{viaje.asientos_disponibles}} | <strong>Precio por asiento: </strong> ${{viaje.precio}}
     </p>
-    <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}} | <strong>Estado: </strong> {{viaje.estado}}
+    <p><strong>Fecha y hora de salida: </strong> {{viaje.fecha_hora}} 
+        {% if user.chofer %}
+        | <strong>Estado: </strong> {{viaje.estado}}
+        {% endif %}
     </p>
     {% if user.cliente %}
         {% if viaje.estado == 'Pendiente' %}

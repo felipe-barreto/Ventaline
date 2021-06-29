@@ -529,8 +529,8 @@ def chofer_viaje_asistencia(request,viaje):
         if request.POST.get('finalizar_viaje'):
             return redirect('chofer_viaje_confirmar_finalizar', viaje)
 
-        elif request.POST.get('cancelar_viaje'):
-            pass
+        elif request.POST.get('suspender_viaje'):
+            return redirect('chofer_viaje_confirmar_suspender', viaje)
 
         elif request.POST.get('vender_pasajes'):
             pass
@@ -629,3 +629,17 @@ def chofer_viaje_confirmar_finalizar(request, viaje):
             v.save()
         return redirect('chofer_viaje_asistencia', viaje)
     return render(request, "chofer_viaje_confirmar_finalizar.html")
+
+def chofer_viaje_confirmar_suspender(request,viaje):
+    v = viajes.objects.get(id=viaje)
+    compras = Compra.objects.filter(viaje=v)
+    if request.method == 'POST':
+        if request.POST.get('suspender'):
+            for compra in compras:
+                if compra.estado != 'Rechazada':
+                    compra.estado = 'Suspendida'
+                    compra.save()
+            v.estado = 'Suspendido'
+            v.save()
+        return redirect('chofer_viaje_asistencia', viaje)
+    return render(request, "chofer_viaje_confirmar_suspender.html")
