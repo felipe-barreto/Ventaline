@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% if viaje.estado == "Pendiente" %}
-    {{ viaje.estado }}
-{% endif %}
-
 <div class="content-section">
     <h3>Viaje:</h3>
     <p><strong>Origen: </strong> {{viaje.ruta.ciudad_origen}} | <strong>Destino: </strong> {{viaje.ruta.ciudad_destino}}

@@ -43,6 +43,8 @@ def home(request):
                     if fin_suspension <= date.today():
                         request.user.cliente.suspendido = False
                         request.user.cliente.save()
+                    else:
+                        context['fin_suspension'] = fin_suspension
         except:
             pass
         return render(request, 'home.html', context)
@@ -528,7 +530,24 @@ def chofer_pasajero_sintomas(request, compra, pasaje):
     c = Compra.objects.get(id=compra)
     if request.method == 'POST':
         if request.POST.get('ingresar'):
-            if request.POST['cabeza'] == 'si':#combinacion que da covid
+            
+            cant_sintomas = 0
+            if request.POST['cabeza'] == 'si':
+                cant_sintomas += 1
+            if request.POST['garganta'] == 'si':
+                cant_sintomas += 1
+            if request.POST['muscular'] == 'si':
+                cant_sintomas += 1
+            if request.POST['vomitos'] == 'si':
+                cant_sintomas += 1
+            if request.POST['gusto'] == 'si':
+                cant_sintomas += 1
+            if request.POST['olfato'] == 'si':
+                cant_sintomas += 1
+            if request.POST['estrecho'] == 'si':
+                cant_sintomas += 1
+
+            if int(request.POST['temperatura']) >= 38 or cant_sintomas >= 2:#combinacion que da covid
                 c.estado = 'Rechazada'
                 c.save()
                 return redirect("chofer_pasajero_suspender", compra)

@@ -7,7 +7,11 @@
     </p>
     {% if user.cliente %}
         {% if user.cliente.suspendido %}
-            <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
+            {% if fin_suspension > viaje.fecha_hora.date %}
+                <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
+            {% else %}
+                <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
+            {% endif %}
         {% else %}
             <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
         {% endif %}
