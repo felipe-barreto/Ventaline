@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import PasswordChangeView 
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.base_user import BaseUserManager
 from .forms import ExtendedUserCreationForm, ClienteCreationForm, AgregarComentarioForm
 from Tablas.models import Cliente as c, Compra_Producto, Chofer as cho
 from Tablas.models import Comentario as comentarios
@@ -154,6 +155,8 @@ def perfil_contraseña_editar(request):
             usuario_modificado.set_password(contraseña1)
             usuario_modificado.save()           
             cliente.usuario = usuario_modificado
+            cliente.cantidad_de_caracteres_de_la_contraseña = "*"*(len(contraseña1))
+            cliente.save()
             contexto = {"cliente":cliente,"fecha_nacimiento":cliente.fecha_nacimiento.strftime('%Y-%m-%d')}
             return render(request,"perfil.html",contexto)
         else:
@@ -533,7 +536,7 @@ def chofer_viaje_asistencia(request,viaje):
             return redirect('chofer_viaje_confirmar_suspender', viaje)
 
         elif request.POST.get('vender_pasajes'):
-            pass
+            return redirect('chofer_viaje_vender',viaje)
         
     no_hay_pasajeros = False
     if Compra.objects.filter(viaje=v).count() == 0:
@@ -643,3 +646,133 @@ def chofer_viaje_confirmar_suspender(request,viaje):
             v.save()
         return redirect('chofer_viaje_asistencia', viaje)
     return render(request, "chofer_viaje_confirmar_suspender.html")
+
+def chofer_pasajero_suspender(request, compra):
+    comp = Compra.objects.get(id=compra)
+    if request.method == 'POST':
+        if request.POST.get('aceptar'):
+            return redirect("chofer_viaje_asistencia", comp.viaje.id)
+    cliente = comp.cliente  
+    cliente.suspendido = True
+    cliente.fecha_suspension = date.today()
+    cliente.los_clientes_que_tuvieron_coronavirus = True
+
+    compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
+    limite_suspension = date.today() + timedelta(days=15)
+    if comp in compras_cliente:
+        compras_cliente.remove(comp)
+    compras_cancelar = []
+    for c in compras_cliente:
+        if limite_suspension>c.viaje.fecha_hora.date():
+            compras_cancelar.append(c)
+    for compra_cancelar in compras_cancelar:
+        for p in compra_cancelar.compra_producto.all():
+            p.delete()
+        compra_cancelar.delete()
+
+    cliente.save()
+    context = {'cliente': cliente}
+    return render(request,"chofer_pasajero_suspender.html",context)
+
+def chofer_viaje_vender(request, viaje):
+    v = viajes.objects.get(id=viaje)
+    context = {"viaje":v}
+    if request.method == 'POST':
+        if request.POST.get('ingresar'):
+            email = BaseUserManager.normalize_email(request.POST['email'])
+            print (email)
+            users = CustomUser.objects.all()
+            for user in users:
+                if user.email == email:
+                    if not user.cliente.suspendido:
+                        return redirect('chofer_viaje_vender_ya_registrado',viaje=viaje, id_user=user.id, cant_pasajes= int(request.POST['cant_pasajes']))
+                    else:
+                        context = {"viaje":v, "suspendido":True}
+                        return render(request, "chofer_viaje_vender.html", context)
+            if ('@' in email) and ('.com' in email):
+                return redirect('chofer_viaje_vender_no_registrado',viaje,str(email),int(request.POST['cant_pasajes']))
+        if request.POST.get('cancelar'):
+            return redirect("chofer_viaje_asistencia", viaje)
+    return render(request, "chofer_viaje_vender.html", context) 
+
+def chofer_viaje_vender_no_registrado(request,viaje,email,cant_pasajes):
+    v = viajes.objects.get(id=viaje)
+    if request.method == "POST":
+        if request.POST.get('ingresar'):
+            nueva_fecha_de_nacimiento = request.POST['fecha_de_nacimiento']
+            nueva_fecha_de_nacimiento = parse_date(nueva_fecha_de_nacimiento)
+            nuevo_dni = request.POST["dni"]
+            if c.objects.filter(dni=nuevo_dni):
+                context = {"email":email, "viaje": v, "cant_pasajes":cant_pasajes, "error_dni":True}
+                return render(request, 'chofer_viaje_vender_no_registrado.html',context)
+            try:
+                if (date.today() - timedelta(days=(18*365))) < nueva_fecha_de_nacimiento:
+                    context = {"email":email, "viaje": v, "cant_pasajes":cant_pasajes, "menor":True}
+                    return render(request, 'chofer_viaje_vender_no_registrado.html',context) 
+            except:
+                context = {"email":email, "viaje": v, "cant_pasajes":cant_pasajes, "fecha":True}
+                return render(request, 'chofer_viaje_vender_no_registrado.html',context) 
+            if nuevo_dni !="":
+                nuevo_usuario = CustomUser(first_name = "Pendiente", last_name = "Pendiente", password = str(nuevo_dni)+"V", email = email)
+                nuevo_usuario.save()
+                nuevo_cliente = c(usuario = nuevo_usuario, dni = nuevo_dni, fecha_nacimiento = nueva_fecha_de_nacimiento, cantidad_de_caracteres_de_la_contraseña= "*"*(len(nuevo_dni)+1))
+                nuevo_cliente.save()
+                return redirect('chofer_pasajero_sintomas_sin_compra', viaje,nuevo_usuario.id, cant_pasajes,1)
+        if request.POST.get('cancelar'):
+            return redirect("chofer_viaje_asistencia", viaje)
+    context = {"email":email, "viaje": v, "cant_pasajes":cant_pasajes}
+    return render(request, 'chofer_viaje_vender_no_registrado.html',context)
+
+def chofer_viaje_vender_ya_registrado(request,viaje,id_user,cant_pasajes):
+    v = viajes.objects.get(id=viaje)
+    usuario = CustomUser.objects.get(id=id_user)
+    context = {"viaje": v, "usuario":usuario, "cant_pasajes":int(cant_pasajes)}
+    if request.method == 'POST':
+        if request.POST.get('continuar'):
+            return redirect('chofer_pasajero_sintomas_sin_compra', viaje,usuario.id, cant_pasajes,1)
+        if request.POST.get('cancelar'):
+            return redirect("chofer_viaje_asistencia", viaje)
+    return render (request, 'chofer_viaje_vender_ya_registrado.html',context)
+
+def chofer_pasajero_sintomas_sin_compra(request,viaje,id_user,cant_pasajes,pasaje_actual):
+    usuario = CustomUser.objects.get(id=id_user)
+    v = viajes.objects.get(id=viaje)
+    if request.method == 'POST':
+        if request.POST.get('ingresar'):
+            cant_sintomas = 0
+            if request.POST['cabeza'] == 'si':
+                cant_sintomas += 1
+            if request.POST['garganta'] == 'si':
+                cant_sintomas += 1
+            if request.POST['muscular'] == 'si':
+                cant_sintomas += 1
+            if request.POST['vomitos'] == 'si':
+                cant_sintomas += 1
+            if request.POST['gusto'] == 'si':
+                cant_sintomas += 1
+            if request.POST['olfato'] == 'si':
+                cant_sintomas += 1
+            if request.POST['estrecho'] == 'si':
+                cant_sintomas += 1
+
+            if int(request.POST['temperatura']) >= 38 or cant_sintomas >= 2:#combinacion que da covid
+                compra_rechazada =  Compra(viaje=v, precio=v.precio*cant_pasajes, cliente = usuario.cliente, asientos =cant_pasajes, estado = "Rechazada")
+                compra_rechazada.save()
+                return redirect("chofer_pasajero_suspender", compra_rechazada.id)
+            else:
+                if int(pasaje_actual) == int(cant_pasajes):
+                    compra_aceptada =  Compra(viaje=v, precio=v.precio*cant_pasajes, cliente = usuario.cliente, asientos =cant_pasajes, estado = "Aceptada")
+                    compra_aceptada.save()
+                    return redirect("chofer_viaje_vender_confirmar", compra_aceptada.id)
+                else:
+                    return redirect('chofer_pasajero_sintomas_sin_compra', viaje, usuario.id, cant_pasajes, (int(pasaje_actual)+1) )
+    context = {"viaje":v, "pasaje": int(pasaje_actual), "cantidad_pasajes":int(cant_pasajes), "usuario":usuario}
+    return render(request,"chofer_pasajero_sintomas_sin_compra.html",context)
+
+def chofer_viaje_vender_confirmar(request, id_compra):
+    compra = Compra.objects.get(id=id_compra)
+    context = {"compra":compra}
+    if request.method == 'POST':
+        if request.POST.get('Volver'):
+            return redirect("chofer_viaje_asistencia", compra.viaje.id)
+    return render(request, "chofer_viaje_vender_confirmar.html",context)

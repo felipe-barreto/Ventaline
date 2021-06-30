@@ -13,6 +13,9 @@
             {% if user.cliente.suspendido %} 
                 <p style="color: red;"> El día {{user.cliente.fecha_suspension}} has mostrado síntomas compatibles con Covid-19 por lo que no podrás comprar ni realizar viajes con fecha anterior al {{ fin_suspension }}, todos tus viajes en estas fechas han sido cancelados con reembolso del 100%. Podrás seguir comprando pasajes para viajes con fecha de salida posterior al {{ fin_suspension }}. </p>
             {% endif %}
+            {% if user.first_name in "Pendiente" %}
+                <p style="color: red;"> Para utilizar el sistema debes completar la información de tu perfil.</p>
+            {% endif %}
         {% endif %}
         {% for viaje in viajes %}
             {% include "viaje.html" %}
@@ -26,7 +29,7 @@
         <p class='text-muted'>Comentarios de nuestros clientes:
             {% if not comentarios %}
                 No hay comentarios.
-                {% if user.cliente %} 
+                {% if user.cliente and user.first_name not in "Pendiente" %} 
                     <a href="{% url 'agregar_comentario' %}">Agregar un comentario.</a>
                 {% endif %}
             {% else %}

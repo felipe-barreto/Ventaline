@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <h4>El usuario {{usuario.email}} ya se encuentra registrado en el sistema. </h4>
+        <hr>
+        <h4>El precio total de la venta es: ${% widthratio viaje.precio 1 cant_pasajes %}</h4>
+        <hr>
+        <h4>¿Desea continuar con el test de sintomas para vender el pasaje?</h4>
+        <hr>
+        <br>
+        <form method='POST' action="{% url 'chofer_viaje_vender_ya_registrado' viaje.pk usuario.id cant_pasajes %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                    <input type='submit' value='Continuar' name='continuar' class="btn btn-outline-info">
+                    <input type='submit' value='Cancelar' name='cancelar' class="btn btn-outline-info">
+                </fieldset>
+            </form>
+    </div>
+{% endblock content %}

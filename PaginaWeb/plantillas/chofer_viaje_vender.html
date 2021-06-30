@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <form method='POST' action="{% url 'chofer_viaje_vender' viaje.pk %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Ingresa el mail del pasajero</legend>
+                    {% if suspendido %}
+                        <p style="color: red;">El cliente se encuentra suspendido por haber presentado síntomas de COVID en los últimos 15 días.</p>
+                    {% endif %}
+                    <h4>Email:</h4>
+                    <input class= "form-control mb-2" type='text' name='email' maxlength="100">
+                    <h4>N° de pasajes:</h4>
+                    <input class= "form-control mb-2"type='number' name='cant_pasajes' min="1" max="{{viaje.asientos_disponibles}}" required value="1" onkeydown="return false">
+                    <hr>
+                    <input type='submit' value='Ingresar' name='ingresar' class="btn btn-outline-info">
+                    <input type='submit' value='Cancelar' name='cancelar' class="btn btn-outline-info">
+                </fieldset>
+                </form>
+    </div>
+{% endblock content %}

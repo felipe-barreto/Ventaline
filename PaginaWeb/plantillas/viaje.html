@@ -10,8 +10,8 @@
     </p>
     {% if user.cliente %}
         {% if viaje.estado == 'Pendiente' %}
-        {% if user.cliente.suspendido %}
-            {% if fin_suspension > viaje.fecha_hora.date %}
+        {% if user.cliente.suspendido or user.first_name in "Pendiente" %}
+            {% if fin_suspension > viaje.fecha_hora.date or user.first_name in "Pendiente" %}
                 <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
             {% else %}
                 <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>

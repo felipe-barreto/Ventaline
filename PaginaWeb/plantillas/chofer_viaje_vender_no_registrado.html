@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+        <form method='POST' action="{% url 'chofer_viaje_vender_no_registrado' viaje.pk email cant_pasajes %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">El usuario {{email}} no se encuentra registrado en el sistema. Debe ingresar un DNI y fecha de nacimiento del cliente para continuar con el test de síntomas.</legend>
+                <h4>El precio total de la venta es: ${% widthratio viaje.precio 1 cant_pasajes %}</h4>
+                {% if error_dni %}
+                    <p style="color: red;">Este DNI pertenece a un cliente del sistema.</p>
+                {% endif %}
+                <hr>
+                <h4>DNI:</h4>
+                <input class= "form-control mb-2" name="dni" maxlength="100">
+                    {% if menor %}
+                            <p style="color: red;">El cliente no puede ser menor de edad.</p>
+                    {% endif %}
+                    {% if fecha %}
+                    <p style="color: red;">Debe ingresar una fecha de nacimiento.</p>
+                    {% endif %}
+                    <h4>Fecha de nacimiento:</h4> 
+                    <input class="form-control mb-2" type="date" name="fecha_de_nacimiento" style="font-size:20px">
+                    <hr>
+                    <input type='submit' value='Ingresar' name='ingresar' class="btn btn-outline-info">
+                    <input type='submit' value='Cancelar' name='cancelar' class="btn btn-outline-info">
+                </fieldset>
+                </form>
+    </div>
+{% endblock content %}

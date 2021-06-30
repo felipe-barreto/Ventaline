@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PaginaWeb.views import buscar_viaje, chofer_pasajero_sintomas, chofer_pasajero_suspender, chofer_perfil_contraseña_confirmar, chofer_viaje_asistencia, chofer_viaje_confirmar_finalizar, chofer_viaje_confirmar_inicio, chofer_viaje_confirmar_suspender, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
+from PaginaWeb.views import buscar_viaje, chofer_pasajero_sintomas, chofer_pasajero_suspender, chofer_perfil_contraseña_confirmar, chofer_viaje_asistencia, chofer_viaje_confirmar_finalizar, chofer_viaje_confirmar_inicio, chofer_viaje_confirmar_suspender, chofer_viaje_vender, chofer_viaje_vender_ya_registrado, compra_cancelar, compra_detalle,compra_viaje_confirmar, compra_viaje_asientos, compra_viaje_productos, compra_viaje_tarjeta,\
     home, mis_comentarios, mis_compras, registrar, perfil, perfil_editar, perfil_contraseña, perfil_contraseña_editar, perfil_tipo_gold, perfil_tipo_gold_editar,\
     perfil_tipo_pasar_a_comun, perfil_tipo_pasar_a_comun_confirmar, perfil_tipo_comun, perfil_tipo_comun_editar, AgregarComentarioView, ModificarComentarioView,\
-    EliminarComentarioView, EliminarCuentaView, eliminar_cuenta_confirmar, tiene_viajes, chofer_perfil, chofer_perfil_editar, CambiarContraseñaChofer, chofer_perfil_contraseña_confirmar
+    EliminarComentarioView, EliminarCuentaView, eliminar_cuenta_confirmar, tiene_viajes, chofer_perfil, chofer_perfil_editar, CambiarContraseñaChofer, chofer_perfil_contraseña_confirmar,\
+    chofer_viaje_vender, chofer_viaje_vender_ya_registrado, chofer_pasajero_sintomas_sin_compra, chofer_viaje_vender_confirmar, chofer_viaje_vender_no_registrado
 from django.contrib.auth import views as auth_views
 
 
@@ -66,4 +67,9 @@ urlpatterns = [
     path('chofer_viaje_confirmar_inicio/<int:viaje>/<int:estado>', chofer_viaje_confirmar_inicio, name='chofer_viaje_confirmar_inicio'),
     path('chofer_viaje_confirmar_finalizar/<int:viaje>', chofer_viaje_confirmar_finalizar, name='chofer_viaje_confirmar_finalizar'),
     path('chofer_viaje_confirmar_suspender/<int:viaje>', chofer_viaje_confirmar_suspender, name='chofer_viaje_confirmar_suspender'),
+    path('chofer_viaje_vender/<int:viaje>', chofer_viaje_vender, name='chofer_viaje_vender'),
+    path('chofer_viaje_vender_ya_registrado/<int:viaje>/<int:id_user>/<int:cant_pasajes>', chofer_viaje_vender_ya_registrado, name='chofer_viaje_vender_ya_registrado'),
+    path('chofer_pasajero_sintomas_sin_compra/<int:viaje>/<int:id_user>/<int:cant_pasajes>/<int:pasaje_actual>', chofer_pasajero_sintomas_sin_compra, name='chofer_pasajero_sintomas_sin_compra'),
+    path('chofer_viaje_vender_confirmar/<int:id_compra>', chofer_viaje_vender_confirmar, name='chofer_viaje_vender_confirmar'),
+    path('chofer_viaje_vender_no_registrado/<int:viaje>/<str:email>/<int:cant_pasajes>', chofer_viaje_vender_no_registrado, name='chofer_viaje_vender_no_registrado'),
 ]

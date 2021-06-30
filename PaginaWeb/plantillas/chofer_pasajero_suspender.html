@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="content-section">
-        <h3>Caso de posible Covid:</h3>
-        El cliente {{cliente.usuario.first_name}} {{cliente.usuario.last_name}} tiene varios sintomas de COVID-19 por lo que no podrá participar de este viaje
+        <h3>Caso de posible COVID-19:</h3>
+        El cliente 
+        {% if cliente.usuario.first_name in "Pendiente" %}
+            nuevo 
+        {% else %}
+            {{cliente.usuario.first_name}} {{cliente.usuario.last_name}}
+        {% endif %}
+            tiene varios sintomas de COVID-19 por lo que no podrá participar de este viaje
         ni de futuros viajes en los próximos 15 días, se le reembolsará el 100% del costo tanto de este
         viaje como de todos los viajes que haya comprado con fecha de salida en los próximos 15 días.
+        <hr>
+        {% if cliente.usuario.first_name in "Pendiente" %}
+            La contraseña del nuevo cliente es su número de DNI con una V mayúscula al final del mismo. El cliente deberá ingresar al sistema
+            y actualizar sus datos si quiere realizar una compra en el sistema. 
+        {% endif %}
+        <hr>
         <form method="POST">{% csrf_token %}
             <p><input type='submit' name="aceptar" value='Aceptar' class="btn btn-outline-info">
         </form>
