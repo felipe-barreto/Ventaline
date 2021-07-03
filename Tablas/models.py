@@ -72,6 +72,9 @@ class CustomUser(AbstractUser,sd.SoftDeletionModel):
 #Clases
 ##################################################################################################
 
+class Suspendido(sd.SoftDeletionModel):
+    fecha_suspension = models.DateField(null=True,blank=True)
+
 class Cliente(sd.SoftDeletionModel):
     usuario = models.OneToOneField(CustomUser,on_delete=models.DO_NOTHING, related_name='cliente')
     dni = models.CharField(max_length=20,validators=[sd.validar_dni_cliente])
@@ -83,8 +86,8 @@ class Cliente(sd.SoftDeletionModel):
     tarjeta_nombre_titular = models.CharField(max_length=40,null=True,blank=True)
     tarjeta_numero = models.CharField(max_length=16,null=True,blank=True)
     suspendido = models.BooleanField(default=False)
-    fecha_suspension = models.DateField(null=True,blank=True)
-    los_clientes_que_tuvieron_coronavirus = models.BooleanField(default=False)
+    fechas_de_suspension = ManyToManyField(Suspendido)
+    Los_clientes_que_fueron_sospechosos_de_tener_coronavirus = models.BooleanField(default=False) # ESTO ES SOLO PARA QUE SE VEA LINDA LA PÁGINA
 
     def __str__(self):
         return 'Email: %s'%(self.usuario,)
@@ -239,6 +242,7 @@ class Viaje(sd.SoftDeletionModel):
     precio = models.IntegerField()
     datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
     estado = models.TextField(max_length=30,null=True,blank=True,default='Pendiente')
+    Los_viajes_vendidos = models.BooleanField(default=False) # ESTO ES SOLO PARA QUE SE VEA LINDA LA PÁGINA
     
     def __str__(self):
         return 'Ruta: ( %s ), Fecha: %s, Precio: %s'%(self.ruta,self.fecha_hora,self.precio)

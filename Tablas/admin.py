@@ -1,6 +1,7 @@
 from django.contrib import admin
 import Tablas.models as tablas
 from django.contrib.auth.models import Group
+from .custom_filter import ClientesCoronavirusFiltro, ViajesVendidosFiltro
 
 # Register your models here.
 
@@ -15,7 +16,7 @@ class ClientesAdmin(admin.ModelAdmin):
     list_display=("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
     #search_fields=('nombre','apellido','dni','email')
     fields = ("usuario","dni","fecha_nacimiento","gold","tarjeta_cod_seguridad","tarjeta_fecha_vencimiento","tarjeta_nombre_titular","tarjeta_numero")
-    list_filter=('los_clientes_que_tuvieron_coronavirus',)
+    list_filter=(("Los_clientes_que_fueron_sospechosos_de_tener_coronavirus",ClientesCoronavirusFiltro),)
 
     def has_add_permission(self,request):
         return False
@@ -84,6 +85,7 @@ class RutasAdmin(admin.ModelAdmin):
 class ViajesAdmin(admin.ModelAdmin):
     list_display=("ruta","fecha_hora","precio","datos_adicionales")
     fields = ("ruta","fecha_hora","precio","datos_adicionales")
+    list_filter = (("Los_viajes_vendidos",ViajesVendidosFiltro),)
 
     def get_readonly_fields(self, request,obj):
         if obj:

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Tablas',
     'PaginaWeb',
     'crispy_forms',
+    'rangefilter',
 ]
 
 MIDDLEWARE = [

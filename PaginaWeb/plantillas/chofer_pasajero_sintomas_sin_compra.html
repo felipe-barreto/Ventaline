@@ -11,25 +11,25 @@
     <form method='POST'>
     {% csrf_token %}
         <p>Temperatura actual: <input type='number' name='temperatura' min="30" max="45" required value="36" onkeydown="return false">°C</p>
-        
+
         <p>Presenta dolor de cabeza: <input type="hidden" name="cabeza" value="no">
             <input type="checkbox" name="cabeza" value="si"></p>
 
         <p>Presenta dolor de garganta: <input type="hidden" name="garganta" value="no">
             <input type="checkbox" name="garganta" value="si"></p>
-        
+
         <p>Presenta dolor muscular: <input type="hidden" name="muscular" value="no">
             <input type="checkbox" name="muscular" value="si"></p>
-        
+
         <p>Presenta vómitos: <input type="hidden" name="vomitos" value="no">
             <input type="checkbox" name="vomitos" value="si"></p>
 
         <p>Presenta una marcada perdida del gusto: <input type="hidden" name="gusto" value="no">
             <input type="checkbox" name="gusto" value="si"></p>
-        
+
         <p>Presenta una marcada perdida del olfato: <input type="hidden" name="olfato" value="no">
             <input type="checkbox" name="olfato" value="si"></p>
-        
+
         <p>Ha estado en contacto con una persona positiva de COVID-19 en los últimos 15 días: <input type="hidden" name="estrecho" value="no">
             <input type="checkbox" name="estrecho" value="si"></p>
 

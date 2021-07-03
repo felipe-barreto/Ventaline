@@ -19,6 +19,7 @@ from django.utils.dateparse import parse_date
 from Tablas.models import Viaje as viajes
 from Tablas.models import Compra
 from Tablas.models import Producto
+from Tablas.models import Suspendido
 import pytz
 
 def home(request):
@@ -27,8 +28,8 @@ def home(request):
             viajes_ordenados = sorted(list(viajes.objects.all()),key=lambda a: a.fecha_hora)
             viajes_del_chofer = []
             for viaje in viajes_ordenados:
-                if viaje.ruta.combi.chofer == request.user.chofer:
-                    viajes_del_chofer.append (viaje)
+                if (viaje.ruta.combi.chofer == request.user.chofer) and (viaje.estado != "Finalizado"):
+                    viajes_del_chofer.append(viaje)
             context =  {'viajes': viajes_del_chofer}
             return render(request, 'chofer_home.html', context)
     except:
@@ -68,6 +69,10 @@ def registrar(request):
             cliente = cliente_form.save(commit=False)
             cliente.usuario = user
             cliente.cantidad_de_caracteres_de_la_contraseña = "*"*(len(form.cleaned_data.get('password1')))
+            nuevo_suspendido = Suspendido(fecha_suspension=date(1900,1,1))
+            nuevo_suspendido.save()
+            cliente.save()
+            cliente.fechas_de_suspension.add(nuevo_suspendido)
             cliente.save()
             
             email = form.cleaned_data.get('email')
@@ -586,8 +591,9 @@ def chofer_pasajero_suspender(request, compra):
             return redirect("chofer_viaje_asistencia", comp.viaje.id)
     cliente = comp.cliente  
     cliente.suspendido = True
-    cliente.fecha_suspension = date.today()
-    cliente.los_clientes_que_tuvieron_coronavirus = True
+    nuevo_suspendido = Suspendido(fecha_suspension=date.today())
+    nuevo_suspendido.save()
+    cliente.fechas_de_suspension.add(nuevo_suspendido)
 
     compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
     limite_suspension = date.today() + timedelta(days=15)
@@ -776,3 +782,12 @@ def chofer_viaje_vender_confirmar(request, id_compra):
         if request.POST.get('Volver'):
             return redirect("chofer_viaje_asistencia", compra.viaje.id)
     return render(request, "chofer_viaje_vender_confirmar.html",context)
+
+def chofer_mis_viajes(request):
+    viajes_ordenados = sorted(list(viajes.objects.all()),key=lambda a: a.fecha_hora)
+    viajes_del_chofer = []
+    for viaje in viajes_ordenados:
+        if (viaje.ruta.combi.chofer == request.user.chofer) and (viaje.estado == "Finalizado"):
+            viajes_del_chofer.append(viaje)
+    context =  {'viajes': viajes_del_chofer}
+    return render(request, 'chofer_mis_viajes.html', context)

@@ -41,6 +41,7 @@
                             <a class="nav-item nav-link" href="{% url 'perfil' %}">Mi perfil</a>
                         {% endif %}
                         {% if user.chofer %}
+                            <a class="nav-item nav-link" href="{% url 'chofer_mis_viajes' %}">Mis viajes</a>
                             <a class="nav-item nav-link" href="{% url 'chofer_perfil' %}">Perfil chofer</a>
                         {% endif %}
                         {% if not user.chofer %}

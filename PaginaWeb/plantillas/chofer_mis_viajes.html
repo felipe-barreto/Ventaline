@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Próximos viajes:</h2>
+<h2>Viajes realizados:</h2>
 {% if not viajes %}
     </br>
-    <h6>No tienes viajes a realizar.</h6>
+    <h6>No tienes viajes realizados.</h6>
 {% else %}
         <ul class="list-group">
         {% for viaje in viajes %}
