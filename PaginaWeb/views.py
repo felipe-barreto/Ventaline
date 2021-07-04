@@ -30,7 +30,7 @@ def home(request):
             for viaje in viajes_ordenados:
                 if (viaje.ruta.combi.chofer == request.user.chofer) and (viaje.estado != "Finalizado"):
                     viajes_del_chofer.append(viaje)
-            context =  {'viajes': viajes_del_chofer}
+            context =  {'viajes': viajes_del_chofer,"fecha_de_hoy":date.today()}
             return render(request, 'chofer_home.html', context)
     except:
         viajes_ordenados = sorted(list(filter(lambda each: each.viaje_disponible(), viajes.objects.all())),key=lambda a: a.fecha_hora)
@@ -652,33 +652,6 @@ def chofer_viaje_confirmar_suspender(request,viaje):
             v.save()
         return redirect('chofer_viaje_asistencia', viaje)
     return render(request, "chofer_viaje_confirmar_suspender.html")
-
-def chofer_pasajero_suspender(request, compra):
-    comp = Compra.objects.get(id=compra)
-    if request.method == 'POST':
-        if request.POST.get('aceptar'):
-            return redirect("chofer_viaje_asistencia", comp.viaje.id)
-    cliente = comp.cliente  
-    cliente.suspendido = True
-    cliente.fecha_suspension = date.today()
-    cliente.los_clientes_que_tuvieron_coronavirus = True
-
-    compras_cliente = list(filter(lambda each: each.viaje.viaje_futuro(), list(cliente.compras.all()) ))
-    limite_suspension = date.today() + timedelta(days=15)
-    if comp in compras_cliente:
-        compras_cliente.remove(comp)
-    compras_cancelar = []
-    for c in compras_cliente:
-        if limite_suspension>c.viaje.fecha_hora.date():
-            compras_cancelar.append(c)
-    for compra_cancelar in compras_cancelar:
-        for p in compra_cancelar.compra_producto.all():
-            p.delete()
-        compra_cancelar.delete()
-
-    cliente.save()
-    context = {'cliente': cliente}
-    return render(request,"chofer_pasajero_suspender.html",context)
 
 def chofer_viaje_vender(request, viaje):
     v = viajes.objects.get(id=viaje)

@@ -10,8 +10,8 @@
     </p>
     {% if user.cliente %}
         {% if viaje.estado == 'Pendiente' %}
-        {% if user.cliente.suspendido or user.first_name in "Pendiente" %}
-            {% if fin_suspension > viaje.fecha_hora.date or user.first_name in "Pendiente" %}
+        {% if user.cliente.suspendido or user.first_name in "Pendiente" or user.last_name in "Pendiente" %}
+            {% if fin_suspension > viaje.fecha_hora.date or user.first_name in "Pendiente" or user.last_name in "Pendiente" %}
                 <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
             {% else %}
                 <p style='text-align: right;'><a href="{% url 'compra_viaje_asientos' viaje.pk %}" >Comprar pasajes</a></p>
@@ -23,7 +23,11 @@
         <p style="color: darkgrey; text-align: right;">Comprar pasajes</p>
         {% endif %}
     {% endif %}
-    {% if user.chofer %}
-    <p style='text-align: right;'><a href="{% url 'chofer_viaje_asistencia' viaje.pk %}" >Seleccionar</a></p>
+    {% if user.chofer %} 
+        {% if fecha_de_hoy == viaje.fecha_hora.date %}
+            <p style='text-align: right;'><a href="{% url 'chofer_viaje_asistencia' viaje.pk %}" >Seleccionar</a></p>
+        {% else %}
+            <p style="color: darkgrey; text-align: right;">Seleccionar</p>
+        {% endif %}
     {% endif %}
 </li>

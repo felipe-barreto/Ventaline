@@ -4,8 +4,8 @@
         {% if compra.cliente.usuario.first_name in "Pendiente" %}
             La compra del nuevo cliente ha sido registrada exitosamente.
             <hr>
-            La contraseña del nuevo cliente es su número de DNI con una V mayúscula al final del mismo. El cliente deberá ingresar a Ventaline
-            y actualizar sus datos si quiere realizar una compra en el sistema o ver el detalle de su compra.       
+            La contraseña del nuevo cliente es su número de DNI con una V mayúscula al final del mismo. El cliente puede ver el detalle de la compra ingresando con su mail en Ventaline.
+            El cliente deberá ingresar a Ventaline y actualizar sus datos si quiere realizar una compra en el sistema.   
         {% else %}
             La compra del cliente {{compra.cliente.usuario.first_name}} {{compra.cliente.usuario.last_name}} ha sido 
             registrada exitosamente. El cliente puede ver el detalle de la compra ingresando con su mail en Ventaline.
