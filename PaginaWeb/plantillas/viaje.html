@@ -24,7 +24,7 @@
         {% endif %}
     {% endif %}
     {% if user.chofer %} 
-        {% if fecha_de_hoy == viaje.fecha_hora.date %}
+        {% if fecha_de_hoy == viaje.dia_del_viaje %}
             <p style='text-align: right;'><a href="{% url 'chofer_viaje_asistencia' viaje.pk %}" >Seleccionar</a></p>
         {% else %}
             <p style="color: darkgrey; text-align: right;">Seleccionar</p>

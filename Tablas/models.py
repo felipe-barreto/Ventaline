@@ -291,6 +291,10 @@ class Viaje(sd.SoftDeletionModel):
     def fecha_coincide(self,fecha):
         return (self.fecha_hora.date() == fecha.date())
 
+    def dia_del_viaje(self):
+        res = self.fecha_hora.replace(tzinfo=None) - timedelta(hours=3)
+        return (res.date())
+
 class Comentario(sd.SoftDeletionModel):
     autor = models.ForeignKey(Cliente, related_name="comentarios", on_delete=models.DO_NOTHING)
     contenido =  models.TextField(max_length=400)

@@ -12,11 +12,11 @@
                     {% csrf_token %}
                     <div>
                         <h4>Nombre:</h4>
-                        <p><input class="form-control mb-2" value={{chofer.usuario.first_name}} name="nombre_ingresado" style="font-size:20px"></p>
+                        <p><input class="form-control mb-2" value={{chofer.usuario.first_name}} name="nombre_ingresado" style="font-size:20px" required=True></p>
                     </div>
                     <div>
                         <h4>Apellido:</h4>
-                        <p><input class="form-control mb-2" value={{chofer.usuario.last_name}} name="apellido_ingresado" style="font-size:20px"></p>
+                        <p><input class="form-control mb-2" value={{chofer.usuario.last_name}} name="apellido_ingresado" style="font-size:20px" required=True></p>
                     </div>
                     <div>
                         <h4>Email:</h4>
@@ -32,7 +32,7 @@
                         {% if error_con_dni == "Ya existe el dni" %}
                             <p style="color: red;">Ya hay una persona con ese dni, por favor ingrese otro</p>
                         {% endif %}
-                        <p><input class="form-control mb-2" value={{chofer.dni}} name="dni_ingresado" style="font-size:20px"></p>
+                        <p><input class="form-control mb-2" value={{chofer.dni}} name="dni_ingresado" style="font-size:20px" required=True></p>
                     </div>
                     <button class="btn btn-primary btn-block" type="submit">Editar</button>
                 </form>
