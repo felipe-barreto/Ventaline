@@ -4,12 +4,17 @@
         <form method='POST' action="{% url 'chofer_viaje_vender_no_registrado' viaje.pk email cant_pasajes %}">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">El usuario {{email}} no se encuentra registrado en el sistema. Debe ingresar un DNI y fecha de nacimiento del cliente para continuar con el test de síntomas.</legend>
-                <h4>El precio total de la venta es: ${% widthratio viaje.precio 1 cant_pasajes %}</h4>
+
+                    <h4>El usuario {{email}} no se encuentra registrado en el sistema. Debe ingresar un DNI y fecha de nacimiento del cliente para continuar con el test de síntomas.</h4>
+               <hr> 
+            <div class="content-section">
+                <h5>Cantidad de pasajes: {{cant_pasajes}}</h5>
+                <h5>Precio unitario por pasaje: ${{viaje.precio}}</h5>
+                <h4>Precio total de la venta: ${% widthratio viaje.precio 1 cant_pasajes %}</h4>
+            </div>
                 {% if error_dni %}
                     <p style="color: red;">Este DNI pertenece a un cliente del sistema.</p>
                 {% endif %}
-                <hr>
                 <h4>DNI:</h4>
                 <input class= "form-control mb-2" name="dni" maxlength="100">
                     {% if menor %}
