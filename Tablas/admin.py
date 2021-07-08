@@ -83,7 +83,7 @@ class RutasAdmin(admin.ModelAdmin):
             return ['is_deleted','deleted_at']
 
 class ViajesAdmin(admin.ModelAdmin):
-    list_display=("ruta","fecha_hora","precio","datos_adicionales")
+    list_display=("ruta","fecha_hora","precio","datos_adicionales","estado","asientos_vendidos_que_no_fueron_cancelados","dinero_recaudado")
     fields = ("ruta","fecha_hora","precio","datos_adicionales")
     list_filter = (("Los_viajes_vendidos",ViajesVendidosFiltro),)
 

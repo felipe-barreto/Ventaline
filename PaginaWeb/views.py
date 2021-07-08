@@ -385,6 +385,15 @@ def compra_viaje_confirmar(request, viaje):
             for prod in request.session['prods_sel']:
                 compra_prod = Compra_Producto(compra=compra, producto=(Producto.objects.get(nombre=prod[0])), cantidad= int(prod[1]))
                 compra_prod.save()
+            if v.asientos_vendidos_que_no_fueron_cancelados == "No hay asientos vendidos todavía":
+                v.asientos_vendidos_que_no_fueron_cancelados = str(request.session['compra']['asientos']) + "/" + str(v.ruta.combi.cant_asientos)
+            else:
+                cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+                cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+                cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) + int(request.session['compra']['asientos'])
+                v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+            v.dinero_recaudado = v.dinero_recaudado + compra.precio
+            v.save()
             return redirect('mis_compras')
         else:
             return redirect('home')
@@ -433,6 +442,16 @@ def compra_cancelar(request,compra):
         if request.POST.get('si'):
             for p in c.compra_producto.all():
                 p.delete()
+            v = viajes.objects.get(id=c.viaje.id)
+            cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+            cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+            cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) - int(c.asientos)
+            v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+            precio_a_devolver = c.precio
+            if (divmod(((c.viaje.fecha_hora.replace(tzinfo=None) - datetime.now()).total_seconds()),3600)[0]) <= 48:
+                precio_a_devolver = precio_a_devolver / 2
+            v.dinero_recaudado = v.dinero_recaudado - precio_a_devolver
+            v.save()
             c.delete()
         return redirect('mis_compras')
     horas = divmod(((c.viaje.fecha_hora.replace(tzinfo=None) - datetime.now()).total_seconds()),3600)[0]
@@ -603,9 +622,23 @@ def chofer_pasajero_suspender(request, compra):
     for c in compras_cliente:
         if limite_suspension>c.viaje.fecha_hora.date():
             compras_cancelar.append(c)
+    v = viajes.objects.get(id=comp.viaje.id)
+    cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+    cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+    cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) - int(comp.asientos)
+    v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+    v.dinero_recaudado = v.dinero_recaudado - comp.precio
+    v.save()
     for compra_cancelar in compras_cancelar:
         for p in compra_cancelar.compra_producto.all():
             p.delete()
+        v = viajes.objects.get(id=compra_cancelar.viaje.id)
+        cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+        cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+        cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) - int(compra_cancelar.asientos)
+        v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+        v.dinero_recaudado = v.dinero_recaudado - compra_cancelar.precio
+        v.save()
         compra_cancelar.delete()
 
     cliente.save()
@@ -647,6 +680,13 @@ def chofer_viaje_confirmar_suspender(request,viaje):
             for compra in compras:
                 if compra.estado != 'Rechazada':
                     compra.estado = 'Suspendida'
+                    v = viajes.objects.get(id=compra.viaje.id)
+                    cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+                    cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+                    cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) - int(compra.asientos)
+                    v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+                    v.dinero_recaudado = v.dinero_recaudado - compra.precio
+                    v.save()
                     compra.save()
             v.estado = 'Suspendido'
             v.save()
@@ -742,6 +782,15 @@ def chofer_pasajero_sintomas_sin_compra(request,viaje,id_user,cant_pasajes,pasaj
                 if int(pasaje_actual) == int(cant_pasajes):
                     compra_aceptada =  Compra(viaje=v, precio=v.precio*cant_pasajes, cliente = usuario.cliente, asientos =cant_pasajes, estado = "Aceptada")
                     compra_aceptada.save()
+                    if v.asientos_vendidos_que_no_fueron_cancelados == "No hay asientos vendidos todavía":
+                        v.asientos_vendidos_que_no_fueron_cancelados = str(compra_aceptada.asientos) + "/" + str(v.ruta.combi.cant_asientos)
+                    else:
+                        cantidad_actual_de_asientos = v.asientos_vendidos_que_no_fueron_cancelados.split("/")
+                        cantidad_actual_de_asientos = cantidad_actual_de_asientos[0]
+                        cantidad_actual_de_asientos = int(cantidad_actual_de_asientos) + int(compra_aceptada.asientos)
+                        v.asientos_vendidos_que_no_fueron_cancelados = str(cantidad_actual_de_asientos) + "/" + str(v.ruta.combi.cant_asientos)
+                    v.dinero_recaudado = v.dinero_recaudado + compra_aceptada.precio
+                    v.save()
                     return redirect("chofer_viaje_vender_confirmar", compra_aceptada.id)
                 else:
                     return redirect('chofer_pasajero_sintomas_sin_compra', viaje, usuario.id, cant_pasajes, (int(pasaje_actual)+1) )

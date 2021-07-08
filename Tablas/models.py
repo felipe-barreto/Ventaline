@@ -213,7 +213,7 @@ class Ruta(sd.SoftDeletionModel):
                     raise ValidationError('Ya hay una ruta con este origen y destino')
     
     def __str__(self):
-        return 'Origen: (%s, %s), Destino: (%s, %s) Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
+        return 'Origen: (%s, %s), Destino: (%s, %s), Combi: (%s)'%(self.ciudad_origen.nombre_ciudad,self.ciudad_origen.provincia,self.ciudad_destino.nombre_ciudad,self.ciudad_destino.provincia,self.combi)
 
     def delete(self):
         nuevo_origen = Lugar(provincia=self.ciudad_origen.provincia,nombre_ciudad=self.ciudad_origen.nombre_ciudad,observaciones=self.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
@@ -243,6 +243,8 @@ class Viaje(sd.SoftDeletionModel):
     datos_adicionales = models.CharField(max_length=40,null=True,blank=True)
     estado = models.TextField(max_length=30,null=True,blank=True,default='Pendiente')
     Los_viajes_vendidos = models.BooleanField(default=False) # ESTO ES SOLO PARA QUE SE VEA LINDA LA PÁGINA
+    asientos_vendidos_que_no_fueron_cancelados = models.CharField(max_length=40,default="No hay asientos vendidos todavía")
+    dinero_recaudado = IntegerField(default=0)
     
     def __str__(self):
         return 'Ruta: ( %s ), Fecha: %s, Precio: %s'%(self.ruta,self.fecha_hora,self.precio)
@@ -312,7 +314,7 @@ class Compra(sd.SoftDeletionModel):
 
     def __str__(self):
         return 'Viaje: ( %s ) - Cliente: ( %s ) - Precio: ( %s )'%(self.viaje,self.cliente,self.precio)
-    
+
     def delete(self):
         nuevo_origen = Lugar(provincia=self.viaje.ruta.ciudad_origen.provincia,nombre_ciudad=self.viaje.ruta.ciudad_origen.nombre_ciudad,observaciones=self.viaje.ruta.ciudad_origen.observaciones,is_deleted=True,deleted_at=timezone.now())
         nuevo_origen.save()
@@ -331,7 +333,7 @@ class Compra(sd.SoftDeletionModel):
         nueva_combi.save()
         nueva_ruta = Ruta(ciudad_origen=nuevo_origen,ciudad_destino=nuevo_destino,combi=nueva_combi,datos_adicionales=self.viaje.ruta.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
         nueva_ruta.save()
-        nuevo_viaje = Viaje(ruta=nueva_ruta,fecha_hora=self.viaje.fecha_hora,precio=self.viaje.precio,datos_adicionales=self.viaje.datos_adicionales,is_deleted=True,deleted_at=timezone.now())
+        nuevo_viaje = Viaje(ruta=nueva_ruta,fecha_hora=self.viaje.fecha_hora,precio=self.viaje.precio,datos_adicionales=self.viaje.datos_adicionales,estado=self.viaje.estado,asientos_vendidos_que_no_fueron_cancelados=self.viaje.asientos_vendidos_que_no_fueron_cancelados,dinero_recaudado=self.viaje.dinero_recaudado,is_deleted=True,deleted_at=timezone.now())
         nuevo_viaje.save()
         self.viaje = nuevo_viaje
         self.estado = 'Cancelada'
