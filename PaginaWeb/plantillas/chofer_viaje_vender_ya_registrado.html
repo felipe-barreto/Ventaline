@@ -4,10 +4,14 @@
     <div class="content-section">
         <h4>El usuario {{usuario.email}} ya se encuentra registrado en el sistema. </h4>
         <hr>
-        <h4>El precio total de la venta es: ${% widthratio viaje.precio 1 cant_pasajes %}</h4>
-        <hr>
+        <h5>Viaje a vender:</h5>
+            {% include "viaje.html" %}
+            <li class="list-group-item list-group-item-light" style="font-size:16px">
+                    <p><strong>Cantidad de pasajes:</strong> {{cant_pasajes}}</p> 
+                    <p> <strong>Precio total de la venta:</strong> ${% widthratio viaje.precio 1 cant_pasajes %}</p>
+            </li>
+            <hr>
         <h4>¿Desea continuar con el test de sintomas para vender el pasaje?</h4>
-        <hr>
         <br>
         <form method='POST' action="{% url 'chofer_viaje_vender_ya_registrado' viaje.pk usuario.id cant_pasajes %}">
             {% csrf_token %}
