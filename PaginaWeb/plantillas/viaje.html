@@ -24,7 +24,7 @@
         {% endif %}
     {% endif %}
     {% if user.chofer %} 
-        {% if fecha_de_hoy == viaje.dia_del_viaje %}
+        {% if fecha_de_hoy == viaje.dia_del_viaje or viaje.estado == "Finalizado" or viaje.estado == "Suspendido" %}
             <p style='text-align: right;'><a href="{% url 'chofer_viaje_asistencia' viaje.pk %}" >Seleccionar</a></p>
         {% else %}
             {% if not cant_pasajes %}

@@ -28,7 +28,7 @@ def home(request):
             viajes_ordenados = sorted(list(viajes.objects.all()),key=lambda a: a.fecha_hora)
             viajes_del_chofer = []
             for viaje in viajes_ordenados:
-                if (viaje.ruta.combi.chofer == request.user.chofer) and (viaje.estado != "Finalizado"):
+                if (viaje.ruta.combi.chofer == request.user.chofer) and ((viaje.estado != "Finalizado") and (viaje.estado != "Suspendido")):
                     viajes_del_chofer.append(viaje)
             context =  {'viajes': viajes_del_chofer,"fecha_de_hoy":date.today()}
             return render(request, 'chofer_home.html', context)
@@ -41,7 +41,7 @@ def home(request):
             #verifica si tiene suspension y si corresponde sacarsela
             if request.user.cliente:
                 if request.user.cliente.suspendido:
-                    fin_suspension = request.user.cliente.fecha_suspension + timedelta(days=15)
+                    fin_suspension = request.user.cliente.ultima_fecha_suspension() + timedelta(days=15)
                     if fin_suspension <= date.today():
                         request.user.cliente.suspendido = False
                         request.user.cliente.save()
@@ -809,7 +809,7 @@ def chofer_mis_viajes(request):
     viajes_ordenados = sorted(list(viajes.objects.all()),key=lambda a: a.fecha_hora)
     viajes_del_chofer = []
     for viaje in viajes_ordenados:
-        if (viaje.ruta.combi.chofer == request.user.chofer) and (viaje.estado == "Finalizado"):
+        if (viaje.ruta.combi.chofer == request.user.chofer) and ((viaje.estado == "Finalizado") or (viaje.estado=="Suspendido")):
             viajes_del_chofer.append(viaje)
     context =  {'viajes': viajes_del_chofer}
     return render(request, 'chofer_mis_viajes.html', context)

@@ -121,6 +121,9 @@ class Cliente(sd.SoftDeletionModel):
         
         if self.gold and (self.tarjeta_fecha_vencimiento<=date.today()):
             raise ValidationError('La tarjeta está vencida')
+    
+    def ultima_fecha_suspension(self):
+        return list(self.fechas_de_suspension.all())[-1].fecha_suspension
 
     
 class Chofer(sd.SoftDeletionModel):

@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Próximos viajes:</h2>
 {% if user.cliente.suspendido %} 
-    <p style="color: red;"> El día {{user.cliente.fecha_suspension}} has mostrado síntomas compatibles con Covid-19 por lo que no podrás comprar ni realizar viajes con fecha anterior al {{ fin_suspension }}, todos tus viajes en estas fechas han sido cancelados con reembolso del 100%. Podrás seguir comprando pasajes para viajes con fecha de salida posterior al {{ fin_suspension }}. </p>
+    <p style="color: red;"> El día {{user.cliente.ultima_fecha_suspension }} has mostrado síntomas compatibles con Covid-19 por lo que no podrás comprar ni realizar viajes con fecha anterior al {{ fin_suspension }}, todos tus viajes en estas fechas han sido cancelados con reembolso del 100%. Podrás seguir comprando pasajes para viajes con fecha de salida posterior al {{ fin_suspension }}. </p>
 {% endif %}
 {% if user.first_name in "Pendiente" %}
     <p style="color: red;"> Para utilizar el sistema debes completar la información de tu perfil.</p>
